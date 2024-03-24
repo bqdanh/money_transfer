@@ -1,6 +1,6 @@
 package sof
 
-import "github.com/banhquocdanh/money_transfer/internal/entities/account"
+import "github.com/bqdanh/money_transfer/internal/entities/account"
 
 const (
 	SourceOfFundCodeVCB = account.SourceOfFundCode("VCB")
