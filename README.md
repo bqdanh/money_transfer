@@ -63,6 +63,10 @@ To get api documentation you can visit [http://localhost:8080/docs](http://local
 - `amount`: amount of money
 - `transaction_type`: type of transaction (2 possible values: `withdraw`, `deposit`)
 
+### API
+- `GET /api/users/<user_id>/transactions`: get all transaction of user
+- `POST /api/users/<user_id>/transactions`: create a transaction for user: withdraw or deposit
+
 # Database
 MySQL as database, use sqlc for generating code from sql file.
 Schema of database in folder `./internal/adapters/repository/sqlc/schema`.
