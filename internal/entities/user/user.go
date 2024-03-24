@@ -62,7 +62,7 @@ func CreateUser(userName, password, fullName, phone string) (User, error) {
 }
 
 func hashPassword(pw string) (string, error) {
-	bs, err := bcrypt.GenerateFromPassword([]byte(pw), 14)
+	bs, err := bcrypt.GenerateFromPassword([]byte(pw), 10)
 	if err != nil {
 		return "", fmt.Errorf("hash password: %w", err)
 	}

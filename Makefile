@@ -12,6 +12,7 @@ GO_TOOLS = 	google.golang.org/grpc/cmd/protoc-gen-go-grpc \
 			github.com/sqlc-dev/sqlc/cmd/sqlc \
 			github.com/go-swagger/go-swagger/cmd/swagger \
             github.com/bufbuild/buf/cmd/buf \
+            github.com/golang/mock \
 
 install:
 	go get $(GO_TOOLS)

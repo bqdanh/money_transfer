@@ -1,4 +1,4 @@
-package users
+package create_user
 
 import (
 	"context"
@@ -6,6 +6,8 @@ import (
 
 	"github.com/bqdanh/money_transfer/internal/entities/user"
 )
+
+//go:generate mockgen --source=./create_user.go --destination=./mocks.go --package=create_user .
 
 type CreateUser struct {
 	ur userRepository
