@@ -9,8 +9,7 @@ GO_TOOLS = 	google.golang.org/grpc/cmd/protoc-gen-go-grpc \
 			github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc \
 			github.com/bold-commerce/protoc-gen-struct-transformer \
 			github.com/googleapis/api-linter/cmd/api-linter \
-			github.com/kyleconroy/sqlc \
-			github.com/kyleconroy/sqlc/cmd/sqlc \
+			github.com/sqlc-dev/sqlc/cmd/sqlc \
 			github.com/go-swagger/go-swagger/cmd/swagger \
             github.com/bufbuild/buf/cmd/buf \
 
