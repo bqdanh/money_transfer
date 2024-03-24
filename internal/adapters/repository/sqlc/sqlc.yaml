@@ -1,0 +1,21 @@
+version: "2"
+sql:
+  - schema: "schema/"
+    queries: "queries/"
+    engine: "mysql"
+    gen:
+      go:
+        package: "moneytransfer"
+        out: "moneytransfer"
+        emit_prepared_queries: true
+        emit_interface: true
+        emit_exact_table_names: true
+        emit_json_tags: true
+        emit_result_struct_pointers: true
+        emit_params_struct_pointers: true
+        output_files_suffix: _generated
+        output_db_file_name: database_generated
+        output_models_file_name: models_generated
+        output_querier_file_name: querier_generated
+
+#overrides:

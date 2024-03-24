@@ -26,3 +26,7 @@ run-http-service:
 
 docker-compose-up:
 	docker-compose up --build
+
+
+generate_sqlc:## generate database model
+	sqlc generate -f ./internal/adapters/repository/sqlc/sqlc.yaml
