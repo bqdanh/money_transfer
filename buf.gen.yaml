@@ -1,0 +1,30 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/bqdanh/money_transfer/api
+    except:
+      - buf.build/googleapis/googleapis
+      - buf.build/envoyproxy/protoc-gen-validate
+plugins:
+  - plugin: buf.build/protocolbuffers/go
+    out: ./api/grpc
+    opt: paths=source_relative
+  - plugin: buf.build/grpc/go
+    out: ./api/grpc
+    opt:
+      - paths=source_relative
+      - require_unimplemented_servers=true
+  - plugin: buf.build/grpc-ecosystem/gateway
+    out: ./api/grpc
+    opt:
+      - paths=source_relative
+  - plugin: buf.build/bufbuild/validate-go
+    out: ./api/grpc
+    opt:
+      - paths=source_relative
+  - plugin: buf.build/grpc-ecosystem/openapiv2:v2.19.1
+    out: ./api/docs
+    opt:
+      - output_format=yaml
+      - version=true

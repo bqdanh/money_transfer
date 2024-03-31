@@ -30,3 +30,6 @@ docker-compose-up:
 
 generate_sqlc:## generate database model
 	sqlc generate -f ./internal/adapters/repository/sqlc/sqlc.yaml
+
+make proto:## generate proto
+	buf generate
