@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "github.com/bqdanh/money_transfer";
+
+
+message BadRequest {
+    message FieldViolation{
+        string field = 1;
+        string description = 2;
+        map<string, string> metadata = 3;
+    }
+    repeated FieldViolation field_violations = 1;
+}
+

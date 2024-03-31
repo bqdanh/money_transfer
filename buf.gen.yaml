@@ -4,6 +4,8 @@ managed:
   go_package_prefix:
     default: github.com/bqdanh/money_transfer/api
     except:
+      - buf.build/grpc-ecosystem/protoc-gen-swagger
+      - buf.build/grpc-ecosystem/openapiv2
       - buf.build/googleapis/googleapis
       - buf.build/envoyproxy/protoc-gen-validate
 plugins:

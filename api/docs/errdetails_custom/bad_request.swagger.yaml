@@ -1,62 +1,13 @@
 swagger: "2.0"
 info:
-  title: user_service/service.proto
+  title: errdetails_custom/bad_request.proto
   version: version not set
-tags:
-  - name: UserService
 consumes:
   - application/json
 produces:
   - application/json
-paths:
-  /api/user/v1/create-user:
-    put:
-      operationId: UserService_CreateUser
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/CreateUserResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/rpcStatus'
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/CreateUserRequest'
-      tags:
-        - UserService
+paths: {}
 definitions:
-  CreateUserRequest:
-    type: object
-    properties:
-      username:
-        type: string
-      password:
-        type: string
-      fullName:
-        type: string
-      phone:
-        type: string
-  CreateUserResponse:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      data:
-        $ref: '#/definitions/CreateUserResponseData'
-  CreateUserResponseData:
-    type: object
-    properties:
-      userId:
-        type: string
-        format: int64
   protobufAny:
     type: object
     properties:

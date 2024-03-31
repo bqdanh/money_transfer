@@ -9,7 +9,7 @@ const (
 )
 
 type PreconditionError struct {
-	// The type of PreconditionFailure, example: AccountPrecondition
+	// The type of PreconditionFailure, example: user-name-duplicated
 	Type        PreconditionType
 	Subject     string
 	Description string
