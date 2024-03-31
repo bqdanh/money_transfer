@@ -46,6 +46,29 @@ func CreateUser(userName, password, fullName, phone string) (User, error) {
 			},
 		)
 	}
+	if len(fullName) == 0 {
+		return User{}, exceptions.NewInvalidArgumentError(
+			"FullName",
+			"full name must not empty",
+			nil,
+		)
+	}
+	if len(phone) > 0 {
+		for _, c := range phone {
+			if c == '+' {
+				continue
+			}
+			if c < '0' || c > '9' {
+				return User{}, exceptions.NewInvalidArgumentError(
+					"Phone",
+					"phone must be number",
+					map[string]interface{}{
+						"got": phone,
+					},
+				)
+			}
+		}
+	}
 	hpw, err := hashPassword(password)
 	if err != nil {
 		return User{}, fmt.Errorf("hash password: %w", err)

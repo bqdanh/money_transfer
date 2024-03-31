@@ -36,6 +36,7 @@ type CreateUserParams struct {
 }
 
 func (h CreateUser) Handle(ctx context.Context, p CreateUserParams) (user.User, error) {
+	//TODO: validate phone no duplicated or some biz logic condition
 	u, err := user.CreateUser(p.UserName, p.Password, p.FullName, p.Phone)
 	if err != nil {
 		return user.User{}, fmt.Errorf("create entity user: %w", err)

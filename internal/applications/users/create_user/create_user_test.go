@@ -152,6 +152,46 @@ func TestCreateUser_Handle(t *testing.T) {
 				err: exceptions.NewInvalidArgumentError("Password", "length of password must between 6 and 16", map[string]interface{}{}),
 			},
 		},
+		{
+			name: "invalid full name",
+			dependencies: dependencies{
+				urf: func(tt *testing.T) userRepository {
+					ur := NewMockuserRepository(gomock.NewController(tt))
+					return ur
+				},
+			},
+			params: CreateUserParams{
+				UserName: "username_test",
+				Password: "pw_test",
+				FullName: "",
+				Phone:    "+8400000",
+			},
+			expected: expected{
+				u:   user.User{},
+				err: exceptions.NewInvalidArgumentError("FullName", "full name must not empty", nil),
+			},
+		},
+		{
+			name: "invalid phone number",
+			dependencies: dependencies{
+				urf: func(tt *testing.T) userRepository {
+					ur := NewMockuserRepository(gomock.NewController(tt))
+					return ur
+				},
+			},
+			params: CreateUserParams{
+				UserName: "username_test",
+				Password: "pw_test",
+				FullName: "name test",
+				Phone:    "+8400000hai",
+			},
+			expected: expected{
+				u: user.User{},
+				err: exceptions.NewInvalidArgumentError("Phone", "phone must be number", map[string]interface{}{
+					"got": "+8400000hai",
+				}),
+			},
+		},
 	}
 
 	for _, tc := range testcases {
