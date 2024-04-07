@@ -1,0 +1,26 @@
+env: local
+
+logger:
+  environment: "dev"
+  service_name: "money_transfer"
+  level: debug
+  encoding: json
+  disable_stacktrace: true
+
+grpc:
+  host: 0.0.0.0
+  port: 9090
+
+http:
+  host: 0.0.0.0
+  port: 8080
+
+database:
+  address: 0.0.0.0:3306
+  user: app_user
+  passwd: pwd123
+  allow_native_passwords: true
+  database_name: money_transfer
+  max_open_conn: 10
+  max_idle_conn: 5
+  conn_max_life_time: 10m

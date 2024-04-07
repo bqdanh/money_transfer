@@ -21,4 +21,5 @@
 go.work
 .idea
 vendor
+db_data
 

@@ -4,23 +4,34 @@ import (
 	"context"
 
 	"github.com/bqdanh/money_transfer/api/grpc/user_service"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc/utils"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc/utils/exceptions_parser"
 	"github.com/bqdanh/money_transfer/internal/applications/users/create_user"
-	"github.com/bqdanh/money_transfer/internal/ports/grpc/common"
-	"github.com/bqdanh/money_transfer/internal/ports/grpc/common/exceptions_parser"
 	"github.com/bqdanh/money_transfer/pkg/logger"
+	"google.golang.org/grpc"
 )
 
 type UserService struct {
 	user_service.UnimplementedUserServiceServer
-	userApp userApplications
+	App UserApplications
 }
 
-type userApplications struct {
-	createUser create_user.CreateUser
+type UserApplications struct {
+	CreateUser create_user.CreateUser
+}
+
+func NewUserService(app UserApplications) *UserService {
+	return &UserService{
+		App: app,
+	}
+}
+
+func (s *UserService) RegisterService(server grpc.ServiceRegistrar) {
+	user_service.RegisterUserServiceServer(server, s)
 }
 
 func (s *UserService) CreateUser(ctx context.Context, req *user_service.CreateUserRequest) (*user_service.CreateUserResponse, error) {
-	u, err := s.userApp.createUser.Handle(context.Background(), create_user.CreateUserParams{
+	u, err := s.App.CreateUser.Handle(context.Background(), create_user.CreateUserParams{
 		UserName: req.Username,
 		Password: req.Password,
 		FullName: req.FullName,
@@ -31,8 +42,8 @@ func (s *UserService) CreateUser(ctx context.Context, req *user_service.CreateUs
 		return nil, exceptions_parser.Err2GrpcStatus(err).Err()
 	}
 	return &user_service.CreateUserResponse{
-		Code:    common.CodeSuccess,
-		Message: common.MessageSuccess,
+		Code:    utils.CodeSuccess,
+		Message: utils.MessageSuccess,
 		Data: &user_service.CreateUserResponse_Data{
 			UserId: u.ID,
 		},

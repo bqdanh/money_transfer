@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: arm64v8/mysql:oracle
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootroot
+      - MYSQL_DATABASE=money_transfer
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=pwd123
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - "./internal/adapters/repository/sqlc/schema/table_user.sql:/docker-entrypoint-initdb.d/1.sql"
+    networks:
+      - money_network
+
+networks:
+  money_network:
+    driver: bridge
