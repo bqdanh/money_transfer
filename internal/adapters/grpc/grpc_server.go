@@ -6,7 +6,6 @@ import (
 	"net"
 
 	"github.com/bqdanh/money_transfer/pkg/grpc_interceptor"
-	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	_ "github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
@@ -26,7 +25,7 @@ func StartServer(grpcCfg Config, services ...Service) (gracefulStop func(), cerr
 	grpc_prometheus.EnableHandlingTimeHistogram()
 	grpcService := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_interceptor.ZapLoggerUnaryServerInterceptor(grpc_interceptor.DefaultShouldLog(map[string]struct{}{}))),
-		grpc.ChainUnaryInterceptor(grpc_validator.UnaryServerInterceptor(), grpc_prometheus.UnaryServerInterceptor),
+		grpc.ChainUnaryInterceptor(grpc_interceptor.RequestValidationUnaryServerInterceptor(), grpc_prometheus.UnaryServerInterceptor),
 		grpc.ChainStreamInterceptor(grpc_prometheus.StreamServerInterceptor),
 		grpc.MaxConcurrentStreams(1000),
 		grpc.MaxRecvMsgSize(1024*1024*50), // 50MB
