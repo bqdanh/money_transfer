@@ -92,6 +92,10 @@ func hashPassword(pw string) (string, error) {
 	return string(bs), nil
 }
 
+func ComparePassword(hpw, pw string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hpw), []byte(pw))
+}
+
 func (u User) WithID(id int64) (User, error) {
 	if u.ID > 0 {
 		return u, exceptions.NewPreconditionError(

@@ -47,4 +47,6 @@ const (
 var mappingConditionToMessage = map[exceptions.PreconditionReason]string{
 	exceptions.PreconditionTypeUserDuplicatedUserName: "Tên người dùng đã tồn tại.",
 	exceptions.PreconditionTypeCannotChangeUserID:     "Không thể thay đổi ID người dùng.",
+	exceptions.PreconditionTypeUserNotFound:           "Không tìm thấy người dùng.",
+	exceptions.PreconditionTypePasswordNotMatch:       "Mật khẩu không hợp lệ.",
 }

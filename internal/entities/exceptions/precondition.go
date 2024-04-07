@@ -9,6 +9,8 @@ const (
 
 	PreconditionTypeUserDuplicatedUserName = PreconditionReason("user-name-duplicated")
 	PreconditionTypeCannotChangeUserID     = PreconditionReason("cannot-change-user-id")
+	PreconditionTypeUserNotFound           = PreconditionReason("user-not-found")
+	PreconditionTypePasswordNotMatch       = PreconditionReason("password-not-match")
 )
 
 type PreconditionError struct {
