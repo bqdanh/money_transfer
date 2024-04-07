@@ -1,4 +1,4 @@
-package login
+package validate_username_password
 
 import (
 	"context"
@@ -8,25 +8,25 @@ import (
 	"github.com/bqdanh/money_transfer/internal/entities/user"
 )
 
-type LoginWithUsernamePassword struct {
+type ValidateUsernamePassword struct {
 	userRepo userRepository
 }
 
-func NewLoginWithUsernamePassword(ur userRepository) (LoginWithUsernamePassword, error) {
+func NewValidateUsernamePassword(ur userRepository) (ValidateUsernamePassword, error) {
 	if ur == nil {
-		return LoginWithUsernamePassword{}, exceptions.NewInvalidArgumentError("UserRepository", "user repository must not nil", nil)
+		return ValidateUsernamePassword{}, exceptions.NewInvalidArgumentError("UserRepository", "user repository must not nil", nil)
 	}
-	return LoginWithUsernamePassword{
+	return ValidateUsernamePassword{
 		userRepo: ur,
 	}, nil
 }
 
-type LoginWithUsernamePasswordParams struct {
+type ValidateUsernamePasswordParams struct {
 	Username string
 	Password string
 }
 
-func ValidateLoginWithUsernamePasswordParams(p LoginWithUsernamePasswordParams) error {
+func ValidateParams(p ValidateUsernamePasswordParams) error {
 	if p.Username == "" {
 		return exceptions.NewInvalidArgumentError("Username", "username must not empty", nil)
 	}
@@ -36,15 +36,15 @@ func ValidateLoginWithUsernamePasswordParams(p LoginWithUsernamePasswordParams) 
 	return nil
 }
 
-//go:generate mockgen --source=./login_username_pw.go --destination=./mocks.go --package=login .
+//go:generate mockgen --source=./validate_username_pw.go --destination=./mocks.go --package=validate_username_password .
 
 type userRepository interface {
 	GetUserByUsername(ctx context.Context, username string) (user.User, error)
 }
 
-func (h LoginWithUsernamePassword) Handle(ctx context.Context, p LoginWithUsernamePasswordParams) (user.User, error) {
-	if err := ValidateLoginWithUsernamePasswordParams(p); err != nil {
-		return user.User{}, fmt.Errorf("validate login with username: %w", err)
+func (h ValidateUsernamePassword) Handle(ctx context.Context, p ValidateUsernamePasswordParams) (user.User, error) {
+	if err := ValidateParams(p); err != nil {
+		return user.User{}, fmt.Errorf("validate params: %w", err)
 	}
 	u, err := h.userRepo.GetUserByUsername(ctx, p.Username)
 	if err != nil {

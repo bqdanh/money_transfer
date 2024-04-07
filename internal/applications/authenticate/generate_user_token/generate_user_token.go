@@ -10,6 +10,8 @@ import (
 	"github.com/bqdanh/money_transfer/internal/entities/user"
 )
 
+//TODO: implement refresh token
+
 type GenerateUserToken struct {
 	generator     tokenGenerator
 	tokenDuration time.Duration

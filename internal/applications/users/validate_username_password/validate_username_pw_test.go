@@ -1,4 +1,4 @@
-package login
+package validate_username_password
 
 import (
 	"context"
@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewLoginWithUsernamePassword(t *testing.T) {
+func TestNewValidateUsernamePassword(t *testing.T) {
 	type args struct {
 		ur userRepository
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    LoginWithUsernamePassword
+		want    ValidateUsernamePassword
 		wantErr error
 	}{
 		{
@@ -26,7 +26,7 @@ func TestNewLoginWithUsernamePassword(t *testing.T) {
 			args: args{
 				ur: nil,
 			},
-			want:    LoginWithUsernamePassword{},
+			want:    ValidateUsernamePassword{},
 			wantErr: exceptions.NewInvalidArgumentError("UserRepository", "user repository must not nil", nil),
 		},
 		{
@@ -34,13 +34,13 @@ func TestNewLoginWithUsernamePassword(t *testing.T) {
 			args: args{
 				ur: NewMockuserRepository(gomock.NewController(t)),
 			},
-			want:    LoginWithUsernamePassword{userRepo: NewMockuserRepository(gomock.NewController(t))},
+			want:    ValidateUsernamePassword{userRepo: NewMockuserRepository(gomock.NewController(t))},
 			wantErr: nil,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewLoginWithUsernamePassword(tt.args.ur)
+			got, err := NewValidateUsernamePassword(tt.args.ur)
 			assert.ErrorIs(t, err, tt.wantErr)
 			assert.Equal(t, tt.want, got)
 		})
@@ -62,7 +62,7 @@ func TestHandle(t *testing.T) {
 	tests := []struct {
 		name         string
 		dependencies dependencies
-		args         LoginWithUsernamePasswordParams
+		args         ValidateUsernamePasswordParams
 		want         user.User
 		wantErr      error
 	}{
@@ -75,7 +75,7 @@ func TestHandle(t *testing.T) {
 					return m
 				},
 			},
-			args: LoginWithUsernamePasswordParams{
+			args: ValidateUsernamePasswordParams{
 				Username: "banhdanh",
 				Password: "123",
 			},
@@ -91,7 +91,7 @@ func TestHandle(t *testing.T) {
 					return m
 				},
 			},
-			args: LoginWithUsernamePasswordParams{
+			args: ValidateUsernamePasswordParams{
 				Username: "banhdanh",
 				Password: "123",
 			},
@@ -107,7 +107,7 @@ func TestHandle(t *testing.T) {
 					return m
 				},
 			},
-			args: LoginWithUsernamePasswordParams{
+			args: ValidateUsernamePasswordParams{
 				Username: "banhdanh",
 				Password: "xyz",
 			},
@@ -122,7 +122,7 @@ func TestHandle(t *testing.T) {
 					return m
 				},
 			},
-			args: LoginWithUsernamePasswordParams{
+			args: ValidateUsernamePasswordParams{
 				Username: "",
 				Password: "123",
 			},
@@ -137,7 +137,7 @@ func TestHandle(t *testing.T) {
 					return m
 				},
 			},
-			args: LoginWithUsernamePasswordParams{
+			args: ValidateUsernamePasswordParams{
 				Username: "banhdanh",
 				Password: "",
 			},
@@ -148,7 +148,7 @@ func TestHandle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			h := LoginWithUsernamePassword{
+			h := ValidateUsernamePassword{
 				userRepo: tt.dependencies.userRepoFunc(t),
 			}
 			got, err := h.Handle(context.TODO(), tt.args)
