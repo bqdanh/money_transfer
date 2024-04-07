@@ -1,4 +1,4 @@
-package matcher_gomock
+package gomock_matcher
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ func (m *MatcherWithAssertFunc) Matches(x interface{}) bool {
 
 func (m *MatcherWithAssertFunc) String() string {
 	if m.err != nil {
-		return fmt.Sprintf("notmatches: %v", m.err)
+		return fmt.Sprintf("%v", m.err)
 	}
 	return fmt.Sprintf("matches with AssertFunc")
 }

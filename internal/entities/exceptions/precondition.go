@@ -5,12 +5,15 @@ import "fmt"
 type PreconditionReason string
 
 const (
-	SubjectUser = "user"
+	SubjectUser           = "user"
+	SubjectAuthentication = "authentication"
 
 	PreconditionTypeUserDuplicatedUserName = PreconditionReason("user-name-duplicated")
 	PreconditionTypeCannotChangeUserID     = PreconditionReason("cannot-change-user-id")
 	PreconditionTypeUserNotFound           = PreconditionReason("user-not-found")
 	PreconditionTypePasswordNotMatch       = PreconditionReason("password-not-match")
+	PreconditionTypeInvalidToken           = PreconditionReason("invalid-token")
+	PreconditionTypeTokenExpired           = PreconditionReason("token-expired")
 )
 
 type PreconditionError struct {
