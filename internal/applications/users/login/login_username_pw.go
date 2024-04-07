@@ -14,7 +14,7 @@ type LoginWithUsernamePassword struct {
 
 func NewLoginWithUsernamePassword(ur userRepository) (LoginWithUsernamePassword, error) {
 	if ur == nil {
-		return LoginWithUsernamePassword{}, fmt.Errorf("user repository must not nil")
+		return LoginWithUsernamePassword{}, exceptions.NewInvalidArgumentError("UserRepository", "user repository must not nil", nil)
 	}
 	return LoginWithUsernamePassword{
 		userRepo: ur,

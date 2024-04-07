@@ -7,11 +7,63 @@ import (
 	"time"
 
 	"github.com/bqdanh/money_transfer/internal/entities/authenticate"
+	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"github.com/bqdanh/money_transfer/internal/entities/user"
 	"github.com/bqdanh/money_transfer/pkg/gomock_matcher"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestNewGenerateUserToken(t *testing.T) {
+	type args struct {
+		g tokenGenerator
+		d time.Duration
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    GenerateUserToken
+		wantErr error
+	}{
+		{
+			name: "nil generator",
+			args: args{
+				g: nil,
+				d: 15 * time.Minute,
+			},
+			want:    GenerateUserToken{},
+			wantErr: exceptions.NewInvalidArgumentError("generator", "generator must not nil", nil),
+		},
+		{
+			name: "invalid duration",
+			args: args{
+				g: NewMocktokenGenerator(gomock.NewController(t)),
+				d: 0,
+			},
+			want:    GenerateUserToken{},
+			wantErr: exceptions.NewInvalidArgumentError("duration", "duration must greater than 0", nil),
+		},
+		{
+			name: "valid",
+			args: args{
+				g: NewMocktokenGenerator(gomock.NewController(t)),
+				d: 15 * time.Minute,
+			},
+			want: GenerateUserToken{
+				generator:     NewMocktokenGenerator(gomock.NewController(t)),
+				tokenDuration: 15 * time.Minute,
+			},
+			wantErr: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewGenerateUserToken(tt.args.g, tt.args.d)
+			assert.ErrorIs(t, err, tt.wantErr)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
 
 func TestGenerateUserToken_Handle(t *testing.T) {
 	tokenDuration := 15 * time.Minute

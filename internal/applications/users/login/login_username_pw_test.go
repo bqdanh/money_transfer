@@ -11,7 +11,41 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//help me to generate user for Handle
+func TestNewLoginWithUsernamePassword(t *testing.T) {
+	type args struct {
+		ur userRepository
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    LoginWithUsernamePassword
+		wantErr error
+	}{
+		{
+			name: "nil user repository",
+			args: args{
+				ur: nil,
+			},
+			want:    LoginWithUsernamePassword{},
+			wantErr: exceptions.NewInvalidArgumentError("UserRepository", "user repository must not nil", nil),
+		},
+		{
+			name: "valid",
+			args: args{
+				ur: NewMockuserRepository(gomock.NewController(t)),
+			},
+			want:    LoginWithUsernamePassword{userRepo: NewMockuserRepository(gomock.NewController(t))},
+			wantErr: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewLoginWithUsernamePassword(tt.args.ur)
+			assert.ErrorIs(t, err, tt.wantErr)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
 
 func TestHandle(t *testing.T) {
 	type dependencies struct {

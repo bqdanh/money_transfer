@@ -10,6 +10,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNewValidateUserToken(t *testing.T) {
+	type args struct {
+		v tokenValidator
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    ValidateUserToken
+		wantErr error
+	}{
+		{
+			name: "nil validator",
+			args: args{
+				v: nil,
+			},
+			want:    ValidateUserToken{},
+			wantErr: exceptions.NewInvalidArgumentError("validator", "validator must not nil", nil),
+		},
+		{
+			name: "valid",
+			args: args{
+				v: NewMocktokenValidator(gomock.NewController(t)),
+			},
+			want:    ValidateUserToken{validator: NewMocktokenValidator(gomock.NewController(t))},
+			wantErr: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewValidateUserToken(tt.args.v)
+			assert.ErrorIs(t, err, tt.wantErr)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestValidateUserToken_Handle(t *testing.T) {
 	tokenCreatedAt := time.Now().Add(-10 * time.Second).UnixMilli()
 	tokenExpiredAtInPast := time.Now().Add(-1 * time.Second).UnixMilli()

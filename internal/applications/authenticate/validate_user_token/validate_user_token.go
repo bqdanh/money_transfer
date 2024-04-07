@@ -12,6 +12,15 @@ type ValidateUserToken struct {
 	validator tokenValidator
 }
 
+func NewValidateUserToken(v tokenValidator) (ValidateUserToken, error) {
+	if v == nil {
+		return ValidateUserToken{}, exceptions.NewInvalidArgumentError("validator", "validator must not nil", nil)
+	}
+	return ValidateUserToken{
+		validator: v,
+	}, nil
+}
+
 //go:generate mockgen --source=./validate_user_token.go --destination=./mocks.go --package=validate_user_token .
 
 type tokenValidator interface {
