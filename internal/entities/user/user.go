@@ -92,16 +92,11 @@ func hashPassword(pw string) (string, error) {
 	return string(bs), nil
 }
 
-const (
-	SubjectUser                        = "user"
-	PreconditionTypeCannotChangeUserID = exceptions.PreconditionType("cannot-change-user-id")
-)
-
 func (u User) WithID(id int64) (User, error) {
 	if u.ID > 0 {
 		return u, exceptions.NewPreconditionError(
-			PreconditionTypeCannotChangeUserID,
-			SubjectUser,
+			exceptions.PreconditionTypeCannotChangeUserID,
+			exceptions.SubjectUser,
 			fmt.Sprintf("cannot change user id"), map[string]interface{}{
 				"current_id": u.ID,
 			},

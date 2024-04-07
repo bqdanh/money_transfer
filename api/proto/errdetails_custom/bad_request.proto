@@ -1,7 +1,8 @@
 syntax = "proto3";
 
-option go_package = "github.com/bqdanh/money_transfer";
+package money_transfer.err_details;
 
+option go_package = "github.com/bqdanh/money_transfer";
 
 message BadRequest {
     message FieldViolation{
@@ -12,3 +13,12 @@ message BadRequest {
     repeated FieldViolation field_violations = 1;
 }
 
+message FailPrecondition {
+    message FailureViolation{
+        string reason = 1;
+        string subject= 2;
+        string description = 3;
+        map<string, string> metadata = 4;
+    }
+    repeated FailureViolation failure_violations = 1;
+}

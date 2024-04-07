@@ -16,7 +16,7 @@ paths:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/CreateUserResponse'
+            $ref: '#/definitions/user_serviceCreateUserResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -26,31 +26,10 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CreateUserRequest'
+            $ref: '#/definitions/user_serviceCreateUserRequest'
       tags:
         - UserService
 definitions:
-  CreateUserRequest:
-    type: object
-    properties:
-      username:
-        type: string
-      password:
-        type: string
-      fullName:
-        type: string
-      phone:
-        type: string
-  CreateUserResponse:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      data:
-        $ref: '#/definitions/CreateUserResponseData'
   CreateUserResponseData:
     type: object
     properties:
@@ -187,3 +166,24 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/protobufAny'
+  user_serviceCreateUserRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      fullName:
+        type: string
+      phone:
+        type: string
+  user_serviceCreateUserResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/CreateUserResponseData'

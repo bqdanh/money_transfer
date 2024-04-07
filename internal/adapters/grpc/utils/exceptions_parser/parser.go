@@ -1,11 +1,9 @@
 package exceptions_parser
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
-	"github.com/bqdanh/money_transfer/api/grpc/errdetails_custom"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
@@ -21,7 +19,28 @@ func Err2GrpcStatus(err error) *status.Status {
 	if ok {
 		return sts
 	}
-	return status.New(codes.Internal, err.Error())
+	sts = status.New(codes.Internal, "lỗi hệ thống.")
+	sts, _ = sts.WithDetails(&errdetails.ErrorInfo{
+		Reason: "INTERNAL_ERROR",
+		Domain: "money_transfer",
+		Metadata: map[string]string{
+			"type":      getErrorType(err),
+			"raw_error": err.Error(),
+		},
+	})
+
+	return sts
+}
+
+func getErrorType(err error) string {
+	u, ok := err.(interface {
+		Unwrap() error
+	})
+	if !ok {
+		return fmt.Sprintf("%T", err)
+	}
+
+	return getErrorType(u.Unwrap())
 }
 
 func exceptions2GrpcStatus(err error) (*status.Status, bool) {
@@ -42,50 +61,4 @@ func exceptions2GrpcStatus(err error) (*status.Status, bool) {
 	}
 
 	return nil, false
-}
-
-func fromPreconditionExceptions2GrpcStatus(perr *exceptions.PreconditionError) *status.Status {
-	sts := status.New(codes.FailedPrecondition, perr.Error())
-	md := map[string]string{
-		"description": perr.Description,
-	}
-	for k, v := range perr.Metadata {
-		vstr := fmt.Sprintf("%v", v)
-		if bs, jerr := json.Marshal(v); jerr == nil {
-			vstr = string(bs)
-		}
-		md[k] = vstr
-	}
-	ed := &errdetails.ErrorInfo{
-		Reason:   string(perr.Type),
-		Domain:   perr.Subject,
-		Metadata: md,
-	}
-
-	sts, _ = sts.WithDetails(ed)
-	return sts
-}
-
-func fromInvalidArgumentExceptions2GrpcStatus(ierr *exceptions.InvalidArgumentError) *status.Status {
-	sts := status.New(codes.InvalidArgument, ierr.Error())
-	md := make(map[string]string)
-	for k, v := range ierr.Metadata {
-		vstr := fmt.Sprintf("%v", v)
-		if bs, jerr := json.Marshal(v); jerr == nil {
-			vstr = string(bs)
-		}
-		md[k] = vstr
-	}
-	ed := &errdetails_custom.BadRequest{
-		FieldViolations: []*errdetails_custom.BadRequest_FieldViolation{
-			{
-				Field:       ierr.Field,
-				Description: ierr.Description,
-				Metadata:    md,
-			},
-		},
-	}
-
-	sts, _ = sts.WithDetails(ed)
-	return sts
 }

@@ -3,10 +3,13 @@ package users
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/adapters/repository/sqlc/moneytransfer"
+	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"github.com/bqdanh/money_transfer/internal/entities/user"
+	"github.com/go-sql-driver/mysql"
 )
 
 type UserMysqlRepository struct {
@@ -52,6 +55,21 @@ func (r UserMysqlRepository) CreateUser(ctx context.Context, u user.User) (ru us
 		Phone:    u.Phone,
 	})
 	if err != nil {
+		merr := &mysql.MySQLError{}
+		if errors.As(err, &merr) {
+			if merr.Number == 1062 {
+				return u, exceptions.NewPreconditionError(
+					exceptions.PreconditionTypeUserDuplicatedUserName,
+					exceptions.SubjectUser,
+					"user name is duplicated",
+					map[string]interface{}{
+						"username":  u.UserName,
+						"reason":    "user name must be unique",
+						"mysql_err": merr,
+					},
+				)
+			}
+		}
 		return u, fmt.Errorf("insert user into msyql got error: %w", err)
 	}
 	userId, err := rs.LastInsertId()

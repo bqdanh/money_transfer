@@ -2,23 +2,26 @@ package exceptions
 
 import "fmt"
 
-type PreconditionType string
+type PreconditionReason string
 
 const (
-	PreconditionTypeUserDuplicatedUserName = PreconditionType("user-name-duplicated")
+	SubjectUser = "user"
+
+	PreconditionTypeUserDuplicatedUserName = PreconditionReason("user-name-duplicated")
+	PreconditionTypeCannotChangeUserID     = PreconditionReason("cannot-change-user-id")
 )
 
 type PreconditionError struct {
-	// The type of PreconditionFailure, example: user-name-duplicated
-	Type        PreconditionType
+	// The reason of PreconditionFailure, example: user-name-duplicated
+	Reason      PreconditionReason
 	Subject     string
 	Description string
 	Metadata    map[string]interface{}
 }
 
-func NewPreconditionError(ptype PreconditionType, subject string, description string, md map[string]interface{}) *PreconditionError {
+func NewPreconditionError(reason PreconditionReason, subject string, description string, md map[string]interface{}) *PreconditionError {
 	return &PreconditionError{
-		Type:        ptype,
+		Reason:      reason,
 		Subject:     subject,
 		Description: description,
 		Metadata:    md,
@@ -29,7 +32,7 @@ func (e *PreconditionError) Error() string {
 	if e == nil {
 		return "nil"
 	}
-	return fmt.Sprintf("PreconditionError: {type: %s, subject: %s, description: %s}", e.Type, e.Subject, e.Description)
+	return fmt.Sprintf("PreconditionError: {type: %s, subject: %s, description: %s}", e.Reason, e.Subject, e.Description)
 }
 
 func (e *PreconditionError) Is(target error) bool {
@@ -37,7 +40,7 @@ func (e *PreconditionError) Is(target error) bool {
 	if !ok {
 		return false
 	}
-	return e.Type == t.Type && e.Subject == t.Subject
+	return e.Reason == t.Reason && e.Subject == t.Subject
 }
 
 func (e *PreconditionError) As(target interface{}) bool {

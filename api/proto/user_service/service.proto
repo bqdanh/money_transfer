@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+package money_transfer.user_service;
 option go_package = "github.com/bqdanh/money_transfer";
 
 import "validate/validate.proto";
