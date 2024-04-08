@@ -112,7 +112,7 @@ func TestHandle(t *testing.T) {
 				Password: "xyz",
 			},
 			want:    user.User{},
-			wantErr: exceptions.NewPreconditionError(exceptions.PreconditionTypePasswordNotMatch, exceptions.SubjectUser, "password not match", nil),
+			wantErr: exceptions.NewPreconditionError(exceptions.PreconditionReasonPasswordNotMatch, exceptions.SubjectUser, "password not match", nil),
 		},
 		{
 			name: "invalid username argument",

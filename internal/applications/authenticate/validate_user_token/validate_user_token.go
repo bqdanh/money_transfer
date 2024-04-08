@@ -29,12 +29,12 @@ type tokenValidator interface {
 
 func (v ValidateUserToken) Handle(_ context.Context, token string) (authenticate.UserAuthenticateData, error) {
 	if token == "" {
-		return authenticate.UserAuthenticateData{}, exceptions.NewPreconditionError(exceptions.PreconditionTypeInvalidToken, exceptions.SubjectAuthentication, "token must not empty", nil)
+		return authenticate.UserAuthenticateData{}, exceptions.NewPreconditionError(exceptions.PreconditionReasonInvalidToken, exceptions.SubjectAuthentication, "token must not empty", nil)
 	}
 	u, err := v.validator.ValidateToken(token)
 	if err != nil {
 		return authenticate.UserAuthenticateData{}, exceptions.NewPreconditionError(
-			exceptions.PreconditionTypeInvalidToken,
+			exceptions.PreconditionReasonInvalidToken,
 			exceptions.SubjectAuthentication,
 			"token invalid",
 			map[string]interface{}{
@@ -45,7 +45,7 @@ func (v ValidateUserToken) Handle(_ context.Context, token string) (authenticate
 
 	if u.ExpireAt < time.Now().UnixMilli() {
 		return authenticate.UserAuthenticateData{}, exceptions.NewPreconditionError(
-			exceptions.PreconditionTypeTokenExpired,
+			exceptions.PreconditionReasonTokenExpired,
 			exceptions.SubjectAuthentication,
 			"token expired",
 			map[string]interface{}{

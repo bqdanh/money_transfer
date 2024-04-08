@@ -99,7 +99,7 @@ func ComparePassword(hpw, pw string) error {
 func (u User) WithID(id int64) (User, error) {
 	if u.ID > 0 {
 		return u, exceptions.NewPreconditionError(
-			exceptions.PreconditionTypeCannotChangeUserID,
+			exceptions.PreconditionReasonCannotChangeUserID,
 			exceptions.SubjectUser,
 			fmt.Sprintf("cannot change user id"), map[string]interface{}{
 				"current_id": u.ID,

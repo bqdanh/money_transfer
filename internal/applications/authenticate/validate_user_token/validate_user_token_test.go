@@ -75,7 +75,7 @@ func TestValidateUserToken_Handle(t *testing.T) {
 				token: "",
 			},
 			want:    authenticate.UserAuthenticateData{},
-			wantErr: exceptions.NewPreconditionError(exceptions.PreconditionTypeInvalidToken, exceptions.SubjectAuthentication, "token must not empty", nil),
+			wantErr: exceptions.NewPreconditionError(exceptions.PreconditionReasonInvalidToken, exceptions.SubjectAuthentication, "token must not empty", nil),
 		},
 		{
 			name: "token valid",
@@ -124,7 +124,7 @@ func TestValidateUserToken_Handle(t *testing.T) {
 			},
 			want: authenticate.UserAuthenticateData{},
 			wantErr: exceptions.NewPreconditionError(
-				exceptions.PreconditionTypeTokenExpired,
+				exceptions.PreconditionReasonTokenExpired,
 				exceptions.SubjectAuthentication,
 				"token expired",
 				map[string]interface{}{

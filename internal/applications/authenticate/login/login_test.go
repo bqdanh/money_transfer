@@ -144,7 +144,7 @@ func TestLogin_Handle(t *testing.T) {
 						Return(
 							user.User{},
 							exceptions.NewPreconditionError(
-								exceptions.PreconditionTypePasswordNotMatch,
+								exceptions.PreconditionReasonPasswordNotMatch,
 								exceptions.SubjectUser,
 								"password not match",
 								map[string]interface{}{},
@@ -168,7 +168,7 @@ func TestLogin_Handle(t *testing.T) {
 				Token: "",
 			},
 			wantErr: exceptions.NewPreconditionError(
-				exceptions.PreconditionTypePasswordNotMatch,
+				exceptions.PreconditionReasonPasswordNotMatch,
 				exceptions.SubjectUser,
 				"password not match",
 				map[string]interface{}{},

@@ -6,14 +6,16 @@ type PreconditionReason string
 
 const (
 	SubjectUser           = "user"
+	SubjectAccount        = "account"
 	SubjectAuthentication = "authentication"
 
-	PreconditionTypeUserDuplicatedUserName = PreconditionReason("user-name-duplicated")
-	PreconditionTypeCannotChangeUserID     = PreconditionReason("cannot-change-user-id")
-	PreconditionTypeUserNotFound           = PreconditionReason("user-not-found")
-	PreconditionTypePasswordNotMatch       = PreconditionReason("password-not-match")
-	PreconditionTypeInvalidToken           = PreconditionReason("invalid-token")
-	PreconditionTypeTokenExpired           = PreconditionReason("token-expired")
+	PreconditionReasonUserDuplicatedUserName = PreconditionReason("user-name-duplicated")
+	PreconditionReasonCannotChangeUserID     = PreconditionReason("cannot-change-user-id")
+	PreconditionReasonUserNotFound           = PreconditionReason("user-not-found")
+	PreconditionReasonPasswordNotMatch       = PreconditionReason("password-not-match")
+	PreconditionReasonInvalidToken           = PreconditionReason("invalid-token")
+	PreconditionReasonTokenExpired           = PreconditionReason("token-expired")
+	PreconditionReasonAccountIsLinked        = PreconditionReason("account-is-linked")
 )
 
 type PreconditionError struct {

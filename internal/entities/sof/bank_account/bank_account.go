@@ -1,4 +1,4 @@
-package sof
+package bank_account
 
 // BankAccount
 type BankAccount struct {

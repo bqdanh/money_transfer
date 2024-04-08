@@ -25,6 +25,7 @@ type SourceOfFundData struct {
 type IsSourceOfFundItr interface {
 	isSourceOfFund()
 	GetSourceOfFundCode() SourceOfFundCode
+	IsTheSameSof(other IsSourceOfFundItr) bool
 }
 
 type IsSourceOfFundImplementMustImport struct {

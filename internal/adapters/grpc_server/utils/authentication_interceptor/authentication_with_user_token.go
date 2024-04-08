@@ -56,7 +56,7 @@ func (a *AuthenticationWithUserToken) UserTokenAuthenticationInterceptor() grpc.
 				&errdetails_custom.FailPrecondition{
 					FailureViolations: []*errdetails_custom.FailPrecondition_FailureViolation{
 						{
-							Reason:      string(exceptions.PreconditionTypeInvalidToken),
+							Reason:      string(exceptions.PreconditionReasonInvalidToken),
 							Subject:     exceptions.SubjectAuthentication,
 							Description: "not found token in incoming context",
 							Metadata: map[string]string{
@@ -75,7 +75,7 @@ func (a *AuthenticationWithUserToken) UserTokenAuthenticationInterceptor() grpc.
 				&errdetails_custom.FailPrecondition{
 					FailureViolations: []*errdetails_custom.FailPrecondition_FailureViolation{
 						{
-							Reason:      string(exceptions.PreconditionTypeInvalidToken),
+							Reason:      string(exceptions.PreconditionReasonInvalidToken),
 							Subject:     exceptions.SubjectAuthentication,
 							Description: "not found token in header",
 							Metadata: map[string]string{

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package money_transfer.account;
+option go_package = "github.com/bqdanh/money_transfer";
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/rpc/error_details.proto";
+
+import "protoc-gen-swagger/options/annotations.proto";
+
+service AccountService {
+  rpc LinkBankAccount(LinkBankAccountRequest) returns (LinkBankAccountResponse) {
+    option (google.api.http) = {
+      post: "/api/user/{user_id}/account/v1/link/bank-account",
+      body: "*"
+    };
+  }
+}
+
+message LinkBankAccountRequest {
+  int64 user_id = 1;
+  string bank_code = 2;
+  string account_name = 3;
+  string account_number = 4;
+}
+
+message LinkBankAccountResponse {
+  int32 code = 1;
+  string message = 2;
+  message Data {
+    string account_id = 1;
+  }
+  Data data = 3;
+}

@@ -59,7 +59,7 @@ func (r UserMysqlRepository) CreateUser(ctx context.Context, u user.User) (ru us
 		if errors.As(err, &merr) {
 			if merr.Number == 1062 {
 				return u, exceptions.NewPreconditionError(
-					exceptions.PreconditionTypeUserDuplicatedUserName,
+					exceptions.PreconditionReasonUserDuplicatedUserName,
 					exceptions.SubjectUser,
 					"user name is duplicated",
 					map[string]interface{}{
@@ -88,7 +88,7 @@ func (r UserMysqlRepository) GetUserByUsername(ctx context.Context, username str
 	u, err := q.GetUserByUserName(ctx, username)
 	if errors.Is(err, sql.ErrNoRows) {
 		return user.User{}, exceptions.NewPreconditionError(
-			exceptions.PreconditionTypeUserNotFound,
+			exceptions.PreconditionReasonUserNotFound,
 			exceptions.SubjectUser,
 			"user not found",
 			map[string]interface{}{
@@ -101,7 +101,7 @@ func (r UserMysqlRepository) GetUserByUsername(ctx context.Context, username str
 	}
 	if u == nil {
 		return user.User{}, exceptions.NewPreconditionError(
-			exceptions.PreconditionTypeUserNotFound,
+			exceptions.PreconditionReasonUserNotFound,
 			exceptions.SubjectUser,
 			"user not found",
 			map[string]interface{}{
