@@ -51,7 +51,7 @@ func (h ValidateUsernamePassword) Handle(ctx context.Context, p ValidateUsername
 		return user.User{}, fmt.Errorf("get user by username: %w", err)
 	}
 	if err := user.ComparePassword(u.Password, p.Password); err != nil {
-		return user.User{}, exceptions.NewPreconditionError(exceptions.PreconditionTypePasswordNotMatch, exceptions.SubjectUser, "password not match", nil)
+		return user.User{}, exceptions.NewPreconditionError(exceptions.PreconditionTypePasswordNotMatch, exceptions.SubjectUser, "password not match", map[string]interface{}{})
 	}
 	return u, nil
 }

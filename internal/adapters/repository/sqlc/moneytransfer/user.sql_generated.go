@@ -10,6 +10,28 @@ import (
 	"database/sql"
 )
 
+const getUserByUserName = `-- name: GetUserByUserName :one
+SELECT id, user_name, password, full_name, phone, created_at, updated_at
+FROM user
+WHERE user_name = ?
+LIMIT 1
+`
+
+func (q *Queries) GetUserByUserName(ctx context.Context, userName string) (*User, error) {
+	row := q.queryRow(ctx, q.getUserByUserNameStmt, getUserByUserName, userName)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.UserName,
+		&i.Password,
+		&i.FullName,
+		&i.Phone,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return &i, err
+}
+
 const insertUser = `-- name: InsertUser :execresult
 INSERT INTO user(user_name,
                  password,

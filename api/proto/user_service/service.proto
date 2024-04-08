@@ -16,6 +16,13 @@ service UserService {
       body: "*"
     };
   }
+
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/user/v1/login",
+      body: "*"
+    };
+  }
 }
 
 
@@ -31,6 +38,20 @@ message CreateUserResponse {
   string message = 2;
   message Data {
     int64 user_id = 1;
+  }
+  Data data = 3;
+}
+
+message LoginRequest {
+  string username = 1 [(validate.rules).string = {min_len: 6, max_len: 16}];
+  string password = 2 [(validate.rules).string = {min_len: 1, max_len: 30}];
+}
+
+message LoginResponse {
+  int32 code = 1;
+  string message = 2;
+  message Data {
+    string token = 1;
   }
   Data data = 3;
 }

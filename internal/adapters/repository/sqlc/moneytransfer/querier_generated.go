@@ -10,6 +10,7 @@ import (
 )
 
 type Querier interface {
+	GetUserByUserName(ctx context.Context, userName string) (*User, error)
 	InsertUser(ctx context.Context, arg *InsertUserParams) (sql.Result, error)
 }
 

@@ -58,7 +58,7 @@ func TestNewGenerateUserToken(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewGenerateUserToken(tt.args.g, tt.args.d)
+			got, err := NewGenerateUserToken(tt.args.g, Config{TokenDuration: tt.args.d})
 			assert.ErrorIs(t, err, tt.wantErr)
 			assert.Equal(t, tt.want, got)
 		})
@@ -104,7 +104,7 @@ func TestGenerateUserToken_Handle(t *testing.T) {
 							return fmt.Errorf("want (Banh Quoc Danh), but got (%v)", v.UserFullName)
 						}
 						//validate token created at near current time, expected different less than 10s
-						if time.Now().UnixMilli()-v.CreatedAt > int64(10*time.Second) {
+						if time.Now().UnixMilli()-v.CreatedAt > int64(10*time.Second/time.Millisecond) {
 							return fmt.Errorf("want (~%d), but got (%v)", time.Now().UnixMilli(), v.CreatedAt)
 						}
 						if time.Now().UnixMilli() < v.CreatedAt {
@@ -154,7 +154,7 @@ func TestGenerateUserToken_Handle(t *testing.T) {
 							return fmt.Errorf("want (Banh Quoc Danh), but got (%v)", v.UserFullName)
 						}
 						//validate token created at near current time, expected different less than 10s
-						if time.Now().UnixMilli()-v.CreatedAt > int64(10*time.Second) {
+						if time.Now().UnixMilli()-v.CreatedAt > int64(10*time.Second/time.Millisecond) {
 							return fmt.Errorf("want (~%d), but got (%v)", time.Now().UnixMilli(), v.CreatedAt)
 						}
 						if time.Now().UnixMilli() < v.CreatedAt {

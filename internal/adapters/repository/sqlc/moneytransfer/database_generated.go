@@ -24,6 +24,9 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.getUserByUserNameStmt, err = db.PrepareContext(ctx, getUserByUserName); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserByUserName: %w", err)
+	}
 	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
 	}
@@ -32,6 +35,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.getUserByUserNameStmt != nil {
+		if cerr := q.getUserByUserNameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserByUserNameStmt: %w", cerr)
+		}
+	}
 	if q.insertUserStmt != nil {
 		if cerr := q.insertUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing insertUserStmt: %w", cerr)
@@ -74,15 +82,17 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db             DBTX
-	tx             *sql.Tx
-	insertUserStmt *sql.Stmt
+	db                    DBTX
+	tx                    *sql.Tx
+	getUserByUserNameStmt *sql.Stmt
+	insertUserStmt        *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:             tx,
-		tx:             tx,
-		insertUserStmt: q.insertUserStmt,
+		db:                    tx,
+		tx:                    tx,
+		getUserByUserNameStmt: q.getUserByUserNameStmt,
+		insertUserStmt:        q.insertUserStmt,
 	}
 }

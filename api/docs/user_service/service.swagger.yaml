@@ -29,13 +29,27 @@ paths:
             $ref: '#/definitions/user_serviceCreateUserRequest'
       tags:
         - UserService
+  /api/user/v1/login:
+    post:
+      operationId: UserService_Login
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/user_serviceLoginResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/user_serviceLoginRequest'
+      tags:
+        - UserService
 definitions:
-  CreateUserResponseData:
-    type: object
-    properties:
-      userId:
-        type: string
-        format: int64
   protobufAny:
     type: object
     properties:
@@ -186,4 +200,32 @@ definitions:
       message:
         type: string
       data:
-        $ref: '#/definitions/CreateUserResponseData'
+        $ref: '#/definitions/user_serviceCreateUserResponseData'
+  user_serviceCreateUserResponseData:
+    type: object
+    properties:
+      userId:
+        type: string
+        format: int64
+  user_serviceLoginRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  user_serviceLoginResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/user_serviceLoginResponseData'
+  user_serviceLoginResponseData:
+    type: object
+    properties:
+      token:
+        type: string

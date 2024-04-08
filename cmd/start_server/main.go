@@ -15,7 +15,12 @@ import (
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	usersgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/users"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
+	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
+	"github.com/bqdanh/money_transfer/internal/adapters/username_pw_validator"
+	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
+	"github.com/bqdanh/money_transfer/internal/applications/authenticate/login"
 	"github.com/bqdanh/money_transfer/internal/applications/users/create_user"
+	"github.com/bqdanh/money_transfer/internal/applications/users/validate_username_password"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/logger"
 	"github.com/urfave/cli/v2"
@@ -138,13 +143,36 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies) ([]gr
 	}
 
 	// new application
-	createUser, err := create_user.NewCreateUser(userrepo)
+	createUserHandler, err := create_user.NewCreateUser(userrepo)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new create user application: %w", err)
 	}
+	validateUsernamePasswordHandler, err := validate_username_password.NewValidateUsernamePassword(userrepo)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new validate username password application: %w", err)
+	}
+
+	usernamePasswordValidatorAdapter, err := username_pw_validator.NewValidateUserNamePasswordWithUserUseCase(validateUsernamePasswordHandler)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new username password validator: %w", err)
+	}
+	jwtTokenAdapter, err := user_token.NewJWTToken(cfg.JwtToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new jwt token: %w", err)
+	}
+	tokenGenerator, err := generate_user_token.NewGenerateUserToken(jwtTokenAdapter, cfg.GenerateToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new token generator: %w", err)
+	}
+
+	loginHandler, err := login.NewLogin(usernamePasswordValidatorAdapter, tokenGenerator)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new login application: %w", err)
+	}
 
 	userApplications := users.UserApplications{
-		CreateUser: createUser,
+		CreateUserHandler: createUserHandler,
+		Login:             loginHandler,
 	}
 	// new server
 	userService := users.NewUserService(userApplications)

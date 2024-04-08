@@ -12,21 +12,25 @@ import (
 
 //TODO: implement refresh token
 
+type Config struct {
+	TokenDuration time.Duration `json:"token_duration" mapstructure:"token_duration"`
+}
+
 type GenerateUserToken struct {
 	generator     tokenGenerator
 	tokenDuration time.Duration
 }
 
-func NewGenerateUserToken(g tokenGenerator, d time.Duration) (GenerateUserToken, error) {
+func NewGenerateUserToken(g tokenGenerator, cfg Config) (GenerateUserToken, error) {
 	if g == nil {
 		return GenerateUserToken{}, exceptions.NewInvalidArgumentError("generator", "generator must not nil", nil)
 	}
-	if d <= 0 {
+	if cfg.TokenDuration <= 0 {
 		return GenerateUserToken{}, exceptions.NewInvalidArgumentError("duration", "duration must greater than 0", nil)
 	}
 	return GenerateUserToken{
 		generator:     g,
-		tokenDuration: d,
+		tokenDuration: cfg.TokenDuration,
 	}, nil
 }
 

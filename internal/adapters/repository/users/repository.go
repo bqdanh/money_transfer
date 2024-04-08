@@ -82,3 +82,32 @@ func (r UserMysqlRepository) CreateUser(ctx context.Context, u user.User) (ru us
 	}
 	return u, nil
 }
+
+func (r UserMysqlRepository) GetUserByUsername(ctx context.Context, username string) (user.User, error) {
+	q := moneytransfer.New(r.db)
+	u, err := q.GetUserByUserName(ctx, username)
+	if errors.Is(err, sql.ErrNoRows) {
+		return user.User{}, exceptions.NewPreconditionError(
+			exceptions.PreconditionTypeUserNotFound,
+			exceptions.SubjectUser,
+			"user not found",
+			map[string]interface{}{
+				"username": username,
+			},
+		)
+	}
+	if err != nil {
+		return user.User{}, fmt.Errorf("get user by username: %w", err)
+	}
+	if u == nil {
+		return user.User{}, exceptions.NewPreconditionError(
+			exceptions.PreconditionTypeUserNotFound,
+			exceptions.SubjectUser,
+			"user not found",
+			map[string]interface{}{
+				"username": username,
+			},
+		)
+	}
+	return fromUserDAOToUser(*u), nil
+}

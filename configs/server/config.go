@@ -8,17 +8,21 @@ import (
 
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
+	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
+	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/logger"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Env      string              `json:"env" mapstructure:"env"`
-	GRPC     grpc.Config         `json:"grpc" mapstructure:"grpc"`
-	HTTP     http_gateway.Config `json:"http" mapstructure:"http"`
-	Database database.Config     `json:"database" mapstructure:"database"`
-	Logger   logger.Config       `json:"logger" mapstructure:"logger"`
+	Env           string                     `json:"env" mapstructure:"env"`
+	GRPC          grpc.Config                `json:"grpc" mapstructure:"grpc"`
+	HTTP          http_gateway.Config        `json:"http" mapstructure:"http"`
+	Database      database.Config            `json:"database" mapstructure:"database"`
+	Logger        logger.Config              `json:"logger" mapstructure:"logger"`
+	JwtToken      user_token.Config          `json:"jwt_token" mapstructure:"jwt_token"`
+	GenerateToken generate_user_token.Config `json:"generate_token" mapstructure:"generate_token"`
 }
 
 func loadDefaultConfig() *Config {

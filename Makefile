@@ -33,3 +33,6 @@ generate_sqlc:## generate database model
 
 make proto:## generate proto
 	buf generate
+
+make sqlc:## generate sqlc querier
+	sqlc generate -f ./internal/adapters/repository/sqlc/sqlc.yaml

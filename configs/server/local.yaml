@@ -24,3 +24,11 @@ database:
   max_open_conn: 10
   max_idle_conn: 5
   conn_max_life_time: 10m
+
+jwt_token:
+  private_key_path: ./configs/server/cert/id_rsa_private_key.txt
+  public_key_path: ./configs/server/cert/id_rsa.pub
+
+generate_token:
+  token_duration: 1h
+
