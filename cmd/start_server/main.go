@@ -12,6 +12,7 @@ import (
 	"github.com/bqdanh/money_transfer/configs/server"
 	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/users"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils/authentication_interceptor"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	usersgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/users"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
@@ -19,6 +20,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/adapters/username_pw_validator"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/login"
+	"github.com/bqdanh/money_transfer/internal/applications/authenticate/validate_user_token"
 	"github.com/bqdanh/money_transfer/internal/applications/users/create_user"
 	"github.com/bqdanh/money_transfer/internal/applications/users/validate_username_password"
 	"github.com/bqdanh/money_transfer/pkg/database"
@@ -96,8 +98,12 @@ func StartHTTPServer(cfg *server.Config) error {
 		return fmt.Errorf("failed to new grpc services: %w", err)
 	}
 
+	authenticateInterceptor, err := NewAuthenticateGrpcInterceptors(cfg, infra)
+	if err != nil {
+		return fmt.Errorf("failed to new authenticate grpc interceptor: %w", err)
+	}
 	// start server
-	grpcStop, cgrpcerr := grpcadapter.StartServer(cfg.GRPC, grpcServices...)
+	grpcStop, cgrpcerr := grpcadapter.StartServer(cfg.GRPC, authenticateInterceptor, grpcServices...)
 	go func() {
 		for gerr := range cgrpcerr {
 			cerr <- fmt.Errorf("grpc server error: %w", gerr)
@@ -123,6 +129,24 @@ func StartHTTPServer(cfg *server.Config) error {
 	<-stop
 	l.Infow("server stopping")
 	return nil
+}
+
+func NewAuthenticateGrpcInterceptors(cfg *server.Config, _ *InfrastructureDependencies) (grpc.UnaryServerInterceptor, error) {
+	jwtTokenAdapter, err := user_token.NewJWTToken(cfg.JwtToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new jwt token: %w", err)
+	}
+
+	validator, err := validate_user_token.NewValidateUserToken(jwtTokenAdapter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new validate user token: %w", err)
+	}
+	methodNoNeedAuthenticate := []string{
+		"/money_transfer.user_service.UserService/Login",
+		"/money_transfer.user_service.UserService/CreateUser",
+	}
+	authenticateHandler := authentication_interceptor.NewAuthenticationWithUserToken(validator, methodNoNeedAuthenticate)
+	return authenticateHandler.UserTokenAuthenticationInterceptor(), nil
 }
 
 func InitInfrastructure(cfg *server.Config) (*InfrastructureDependencies, error) {

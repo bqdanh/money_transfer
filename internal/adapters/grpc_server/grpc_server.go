@@ -21,11 +21,14 @@ type Service interface {
 	RegisterService(s grpc.ServiceRegistrar)
 }
 
-func StartServer(grpcCfg Config, services ...Service) (gracefulStop func(), cerr chan error) {
+func StartServer(grpcCfg Config, authenticateInterceptor grpc.UnaryServerInterceptor, services ...Service) (gracefulStop func(), cerr chan error) {
 	grpc_prometheus.EnableHandlingTimeHistogram()
 	grpcService := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_interceptor.ZapLoggerUnaryServerInterceptor(grpc_interceptor.DefaultShouldLog(map[string]struct{}{}))),
-		grpc.ChainUnaryInterceptor(grpc_interceptor.RequestValidationUnaryServerInterceptor(), grpc_prometheus.UnaryServerInterceptor),
+		grpc.ChainUnaryInterceptor(
+			grpc_prometheus.UnaryServerInterceptor, authenticateInterceptor,
+			grpc_interceptor.RequestValidationUnaryServerInterceptor(),
+		),
 		grpc.ChainStreamInterceptor(grpc_prometheus.StreamServerInterceptor),
 		grpc.MaxConcurrentStreams(1000),
 		grpc.MaxRecvMsgSize(1024*1024*50), // 50MB
