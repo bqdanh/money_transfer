@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bqdanh/money_transfer/internal/adapters/grpc"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
@@ -17,7 +17,7 @@ import (
 
 type Config struct {
 	Env           string                     `json:"env" mapstructure:"env"`
-	GRPC          grpc.Config                `json:"grpc" mapstructure:"grpc"`
+	GRPC          grpc_server.Config         `json:"grpc" mapstructure:"grpc"`
 	HTTP          http_gateway.Config        `json:"http" mapstructure:"http"`
 	Database      database.Config            `json:"database" mapstructure:"database"`
 	Logger        logger.Config              `json:"logger" mapstructure:"logger"`
@@ -28,7 +28,7 @@ type Config struct {
 func loadDefaultConfig() *Config {
 	return &Config{
 		Env: "local",
-		GRPC: grpc.Config{
+		GRPC: grpc_server.Config{
 			Host: "0.0.0.0",
 			Port: 9090,
 		},

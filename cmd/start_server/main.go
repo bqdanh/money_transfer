@@ -10,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/bqdanh/money_transfer/configs/server"
-	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/grpc"
-	"github.com/bqdanh/money_transfer/internal/adapters/grpc/users"
+	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/users"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	usersgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/users"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
