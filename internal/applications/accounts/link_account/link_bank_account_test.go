@@ -93,7 +93,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 			args: args{
 				p: LinkBankAccountParams{
 					UserID:   1,
-					BankCode: "bank_code",
+					BankCode: "VIB",
 				},
 			},
 			want: want{
@@ -122,7 +122,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 			args: args{
 				p: LinkBankAccountParams{
 					UserID:            1,
-					BankCode:          "bank_code",
+					BankCode:          "VIB",
 					BankAccountNumber: "bank_account_number",
 				},
 			},
@@ -152,7 +152,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 			args: args{
 				p: LinkBankAccountParams{
 					UserID:            1,
-					BankCode:          "bank_code",
+					BankCode:          "VIB",
 					BankAccountNumber: "bank_account_number",
 					BankAccountName:   "bank_account_name",
 				},

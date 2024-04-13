@@ -39,6 +39,7 @@ type LoginParams struct {
 }
 
 type LoginResponse struct {
+	User  user.User
 	Token string
 }
 
@@ -66,5 +67,6 @@ func (l Login) Handle(ctx context.Context, p LoginParams) (LoginResponse, error)
 	}
 	return LoginResponse{
 		Token: token,
+		User:  u,
 	}, nil
 }

@@ -84,6 +84,7 @@ func TestLogin_Handle(t *testing.T) {
 			},
 			want: LoginResponse{
 				Token: "token_xyz",
+				User:  mockUser,
 			},
 			wantErr: nil,
 		},

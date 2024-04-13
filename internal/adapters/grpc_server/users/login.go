@@ -23,7 +23,8 @@ func (s *UserService) Login(ctx context.Context, req *user_service.LoginRequest)
 		Code:    utils.CodeSuccess,
 		Message: utils.MessageSuccess,
 		Data: &user_service.LoginResponse_Data{
-			Token: result.Token,
+			Token:  result.Token,
+			UserId: result.User.ID,
 		},
 	}, nil
 }

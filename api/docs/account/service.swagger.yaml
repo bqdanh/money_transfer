@@ -59,6 +59,7 @@ definitions:
     properties:
       accountId:
         type: string
+        format: int64
   protobufAny:
     type: object
     properties:

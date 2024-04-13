@@ -689,6 +689,8 @@ func (m *LoginResponse_Data) validate(all bool) error {
 
 	// no validation rules for Token
 
+	// no validation rules for UserId
+
 	if len(errors) > 0 {
 		return LoginResponse_DataMultiError(errors)
 	}

@@ -11,13 +11,16 @@ import (
 
 	"github.com/bqdanh/money_transfer/configs/server"
 	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/accounts"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/users"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils/authentication_interceptor"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
+	accountgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/accounts"
 	usersgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/users"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
 	"github.com/bqdanh/money_transfer/internal/adapters/username_pw_validator"
+	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/login"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/validate_user_token"
@@ -167,6 +170,7 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies) ([]gr
 	}
 
 	// new application
+	// user application
 	createUserHandler, err := create_user.NewCreateUser(userrepo)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new create user application: %w", err)
@@ -199,9 +203,19 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies) ([]gr
 		Login:             loginHandler,
 	}
 	// new server
+	// new account service
 	userService := users.NewUserService(userApplications)
+
+	//account application
+	accountApplication := accounts.AccountApplications{
+		LinkAccount: link_account.LinkBankAccount{},
+	}
+	// new account service
+	accountService := accounts.NewAccountService(accountApplication)
+
 	return []grpcadapter.Service{
 		userService,
+		accountService,
 	}, nil
 }
 
@@ -219,8 +233,10 @@ func NewHTTPGatewayServices(cfg server.Config, _ *InfrastructureDependencies) ([
 
 	// new http gateway services
 	userHttpGwService := usersgw.NewUserGatewayService(grpcServerConn)
+	accountHttpGwService := accountgw.NewAccountGatewayService(grpcServerConn)
 
 	return []http_gateway.Services{
 		userHttpGwService,
+		accountHttpGwService,
 	}, nil
 }

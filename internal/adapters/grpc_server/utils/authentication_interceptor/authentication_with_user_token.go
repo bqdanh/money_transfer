@@ -44,6 +44,10 @@ const (
 	authenticationHeader = "authorization"
 )
 
+type ApiRequestForUser interface {
+	GetUserId() int64
+}
+
 func (a *AuthenticationWithUserToken) UserTokenAuthenticationInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if _, ok := a.methodsByPassAuthenticate[info.FullMethod]; ok {
@@ -93,6 +97,47 @@ func (a *AuthenticationWithUserToken) UserTokenAuthenticationInterceptor() grpc.
 			sts := exceptions_parser.Err2GrpcStatus(err)
 			return nil, sts.Err()
 		}
+		if data.UserID == 0 {
+			sts := status.New(codes.PermissionDenied, "thông tin xác thực không hợp lệ.")
+			sts, _ = sts.WithDetails(
+				&errdetails_custom.FailPrecondition{
+					FailureViolations: []*errdetails_custom.FailPrecondition_FailureViolation{
+						{
+							Reason:      string(exceptions.PreconditionReasonInvalidToken),
+							Subject:     exceptions.SubjectAuthentication,
+							Description: "user id is zero",
+							Metadata: map[string]string{
+								"method": info.FullMethod,
+							},
+						},
+					},
+				},
+			)
+			return nil, sts.Err()
+		}
+		if ureq, ok := req.(ApiRequestForUser); ok {
+			if ureq.GetUserId() != data.UserID {
+				sts := status.New(codes.PermissionDenied, "thông tin xác thực không hợp lệ.")
+				sts, _ = sts.WithDetails(
+					&errdetails_custom.FailPrecondition{
+						FailureViolations: []*errdetails_custom.FailPrecondition_FailureViolation{
+							{
+								Reason:      string(exceptions.PreconditionReasonInvalidToken),
+								Subject:     exceptions.SubjectAuthentication,
+								Description: "user id in token is not match with user id in request",
+								Metadata: map[string]string{
+									"method":        info.FullMethod,
+									"token_user_id": fmt.Sprintf("%d", data.UserID),
+									"req_user_id":   fmt.Sprintf("%d", ureq.GetUserId()),
+								},
+							},
+						},
+					},
+				)
+				return nil, sts.Err()
+			}
+		}
+
 		ctx = authenticate.ContextWithAuthentication(ctx, data)
 		return handler(ctx, req)
 	}

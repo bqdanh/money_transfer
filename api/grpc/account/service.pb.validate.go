@@ -57,13 +57,49 @@ func (m *LinkBankAccountRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserId
+	if m.GetUserId() < 1 {
+		err := LinkBankAccountRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for BankCode
+	if l := utf8.RuneCountInString(m.GetBankCode()); l < 1 || l > 255 {
+		err := LinkBankAccountRequestValidationError{
+			field:  "BankCode",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for AccountName
+	if l := utf8.RuneCountInString(m.GetAccountName()); l < 1 || l > 255 {
+		err := LinkBankAccountRequestValidationError{
+			field:  "AccountName",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for AccountNumber
+	if l := utf8.RuneCountInString(m.GetAccountNumber()); l < 1 || l > 255 {
+		err := LinkBankAccountRequestValidationError{
+			field:  "AccountNumber",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return LinkBankAccountRequestMultiError(errors)
