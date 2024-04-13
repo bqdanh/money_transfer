@@ -24,8 +24,14 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.getAccountsByUserIDStmt, err = db.PrepareContext(ctx, getAccountsByUserID); err != nil {
+		return nil, fmt.Errorf("error preparing query GetAccountsByUserID: %w", err)
+	}
 	if q.getUserByUserNameStmt, err = db.PrepareContext(ctx, getUserByUserName); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserByUserName: %w", err)
+	}
+	if q.insertAccountStmt, err = db.PrepareContext(ctx, insertAccount); err != nil {
+		return nil, fmt.Errorf("error preparing query InsertAccount: %w", err)
 	}
 	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
@@ -35,9 +41,19 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.getAccountsByUserIDStmt != nil {
+		if cerr := q.getAccountsByUserIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAccountsByUserIDStmt: %w", cerr)
+		}
+	}
 	if q.getUserByUserNameStmt != nil {
 		if cerr := q.getUserByUserNameStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserByUserNameStmt: %w", cerr)
+		}
+	}
+	if q.insertAccountStmt != nil {
+		if cerr := q.insertAccountStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing insertAccountStmt: %w", cerr)
 		}
 	}
 	if q.insertUserStmt != nil {
@@ -82,17 +98,21 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                    DBTX
-	tx                    *sql.Tx
-	getUserByUserNameStmt *sql.Stmt
-	insertUserStmt        *sql.Stmt
+	db                      DBTX
+	tx                      *sql.Tx
+	getAccountsByUserIDStmt *sql.Stmt
+	getUserByUserNameStmt   *sql.Stmt
+	insertAccountStmt       *sql.Stmt
+	insertUserStmt          *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                    tx,
-		tx:                    tx,
-		getUserByUserNameStmt: q.getUserByUserNameStmt,
-		insertUserStmt:        q.insertUserStmt,
+		db:                      tx,
+		tx:                      tx,
+		getAccountsByUserIDStmt: q.getAccountsByUserIDStmt,
+		getUserByUserNameStmt:   q.getUserByUserNameStmt,
+		insertAccountStmt:       q.insertAccountStmt,
+		insertUserStmt:          q.insertUserStmt,
 	}
 }

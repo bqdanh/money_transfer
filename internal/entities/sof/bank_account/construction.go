@@ -12,15 +12,15 @@ import (
 type SourceOfFundBankAccountConstructor func(a BankAccount) (account.SourceOfFundData, error)
 
 var (
-	bankSourceOfFundsString = map[string]account.SourceOfFundCode{}
+	bankSourceOfFundsString = map[account.SourceOfFundCode]account.SourceOfFundCode{}
 
 	sourceOfFundBankAccountMapConstructor = map[account.SourceOfFundCode]SourceOfFundBankAccountConstructor{}
-	rwMutex                               = sync.RWMutex{}
+	rwConstructionMutex                   = sync.RWMutex{}
 )
 
 func RegisterSourceOfFundBankAccountConstructor(code account.SourceOfFundCode, constructor SourceOfFundBankAccountConstructor) {
-	rwMutex.Lock()
-	defer rwMutex.Unlock()
+	rwConstructionMutex.Lock()
+	defer rwConstructionMutex.Unlock()
 	_, ok := sourceOfFundBankAccountMapConstructor[code]
 	if ok {
 		// panic for avoid duplicate register
@@ -30,18 +30,18 @@ func RegisterSourceOfFundBankAccountConstructor(code account.SourceOfFundCode, c
 }
 
 func RegisterSourceOfFundBankAccount(code account.SourceOfFundCode) {
-	rwMutex.Lock()
-	defer rwMutex.Unlock()
-	v, ok := bankSourceOfFundsString[string(code)]
+	rwConstructionMutex.Lock()
+	defer rwConstructionMutex.Unlock()
+	v, ok := bankSourceOfFundsString[code]
 	if ok {
 		panic(fmt.Sprintf("source of fund code %s already registered", v))
 	}
-	bankSourceOfFundsString[string(code)] = code
+	bankSourceOfFundsString[code] = code
 }
 
 func CreateSourceOfFundBankAccount(code account.SourceOfFundCode, a BankAccount) (account.SourceOfFundData, error) {
-	rwMutex.RLock()
-	defer rwMutex.RUnlock()
+	rwConstructionMutex.RLock()
+	defer rwConstructionMutex.RUnlock()
 	constructor, ok := sourceOfFundBankAccountMapConstructor[code]
 	if !ok {
 		return account.SourceOfFundData{}, exceptions.NewInvalidArgumentError("SourceOfFundCode", "invalid source of fund code", map[string]interface{}{"code": code})
@@ -51,9 +51,10 @@ func CreateSourceOfFundBankAccount(code account.SourceOfFundCode, a BankAccount)
 
 func FromStringToSourceOfFundCode(strCode string) (account.SourceOfFundCode, error) {
 	strCode = strings.ToUpper(strCode)
-	v, ok := bankSourceOfFundsString[strCode]
+	code := account.SourceOfFundCode(strCode)
+	v, ok := bankSourceOfFundsString[code]
 	if !ok {
-		return "", exceptions.NewInvalidArgumentError("SourceOfFundCode", "invalid source of fund code", map[string]interface{}{"code": strCode})
+		return "", exceptions.NewInvalidArgumentError("SourceOfFundCode", "invalid source of fund code", map[string]interface{}{"code": code})
 	}
 	return v, nil
 }

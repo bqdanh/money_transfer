@@ -1,4 +1,4 @@
-#define model here for lint
+#define model here for query linter, plz refer to: internal/adapters/repository/sqlc/schema/table_user.sql
 CREATE TABLE `user`
 (
     `id`         BIGINT        NOT NULL AUTO_INCREMENT COMMENT 'is identify user with primary key auto increment',
@@ -9,8 +9,7 @@ CREATE TABLE `user`
     `created_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY pk__user (id),
-    UNIQUE uq__user__user_name (user_name),
-    INDEX ix__user__created_at (created_at)
+    UNIQUE uq__user__user_name (user_name)
 );
 
 -- name: InsertUser :execresult

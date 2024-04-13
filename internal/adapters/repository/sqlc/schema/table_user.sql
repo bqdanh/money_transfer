@@ -8,6 +8,5 @@ CREATE TABLE `user`
     `created_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY pk__user (id),
-    UNIQUE uq__user__user_name (user_name),
-    INDEX ix__user__created_at (created_at)
+    UNIQUE uq__user__user_name (user_name)
 )

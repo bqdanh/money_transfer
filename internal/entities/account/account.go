@@ -15,6 +15,16 @@ const (
 	StatusUnlinked = Status("unlinked")
 )
 
+type SourceOfFundType string
+
+const (
+	SofTypeBankAccount = SourceOfFundType("bank_account")
+
+	//example for another type of source of fund
+	SofTypeEWallet   = SourceOfFundType("ewallet")
+	SofTypeBankToken = SourceOfFundType("bank_token")
+)
+
 // SourceOfFundCode is the code of source of fund: banks: VIB, Vietcombank, Techcombank, etc, finance institutions: LFVN, Momo, ZaloPay, etc
 type SourceOfFundCode string
 
@@ -25,6 +35,7 @@ type SourceOfFundData struct {
 type IsSourceOfFundItr interface {
 	isSourceOfFund()
 	GetSourceOfFundCode() SourceOfFundCode
+	GetSourceOfFundType() SourceOfFundType
 	IsTheSameSof(other IsSourceOfFundItr) bool
 }
 

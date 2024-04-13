@@ -5,8 +5,67 @@
 package moneytransfer
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"fmt"
 	"time"
 )
+
+type AccountAccountType string
+
+const (
+	AccountAccountTypeBankAccount AccountAccountType = "bank_account"
+	AccountAccountTypeEwallet     AccountAccountType = "ewallet"
+	AccountAccountTypeBankToken   AccountAccountType = "bank_token"
+)
+
+func (e *AccountAccountType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AccountAccountType(s)
+	case string:
+		*e = AccountAccountType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AccountAccountType: %T", src)
+	}
+	return nil
+}
+
+type NullAccountAccountType struct {
+	AccountAccountType AccountAccountType `json:"account_account_type"`
+	Valid              bool               `json:"valid"` // Valid is true if AccountAccountType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAccountAccountType) Scan(value interface{}) error {
+	if value == nil {
+		ns.AccountAccountType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AccountAccountType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAccountAccountType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AccountAccountType), nil
+}
+
+type Account struct {
+	// is identify account with primary key auto increment
+	ID int64 `json:"id"`
+	// is identify user with foreign key with table user.id
+	UserID int64 `json:"user_id"`
+	// type of account sof
+	AccountType AccountAccountType `json:"account_type"`
+	// data of account
+	AccountData json.RawMessage `json:"account_data"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+}
 
 type User struct {
 	// is identify user with primary key auto increment
