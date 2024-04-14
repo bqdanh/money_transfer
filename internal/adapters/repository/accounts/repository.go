@@ -57,3 +57,13 @@ func (r AccountMysqlRepository) CreateAccount(ctx context.Context, ac account.Ac
 	ac.ID = id
 	return ac, nil
 }
+
+func (r AccountMysqlRepository) DeleteAccountByUserID(ctx context.Context, userID int64) error {
+	q := moneytransfer.New(r.db)
+	_, err := q.DeleteAccountByUserID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("delete account by id: %w", err)
+	}
+
+	return nil
+}

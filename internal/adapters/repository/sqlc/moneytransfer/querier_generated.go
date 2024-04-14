@@ -10,6 +10,7 @@ import (
 )
 
 type Querier interface {
+	DeleteAccountByUserID(ctx context.Context, userID int64) (sql.Result, error)
 	GetAccountsByUserID(ctx context.Context, userID int64) ([]*Account, error)
 	GetUserByUserName(ctx context.Context, userName string) (*User, error)
 	InsertAccount(ctx context.Context, arg *InsertAccountParams) (sql.Result, error)

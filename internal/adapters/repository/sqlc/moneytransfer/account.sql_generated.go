@@ -11,6 +11,16 @@ import (
 	"encoding/json"
 )
 
+const deleteAccountByUserID = `-- name: DeleteAccountByUserID :execresult
+DELETE
+FROM account
+WHERE user_id = ?
+`
+
+func (q *Queries) DeleteAccountByUserID(ctx context.Context, userID int64) (sql.Result, error) {
+	return q.exec(ctx, q.deleteAccountByUserIDStmt, deleteAccountByUserID, userID)
+}
+
 const getAccountsByUserID = `-- name: GetAccountsByUserID :many
 SELECT id, user_id, account_type, account_data, created_at, updated_at
 FROM account

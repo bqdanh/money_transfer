@@ -20,3 +20,8 @@ VALUES (?, ?, ?);
 SELECT *
 FROM account
 WHERE user_id = ?;
+
+-- name: DeleteAccountByUserID :execresult
+DELETE
+FROM account
+WHERE user_id = ?;
