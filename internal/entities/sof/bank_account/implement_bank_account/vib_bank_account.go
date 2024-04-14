@@ -1,6 +1,9 @@
 package implement_bank_account
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/bqdanh/money_transfer/internal/entities/account"
 	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
@@ -22,6 +25,9 @@ func init() {
 			IsSourceOfFundItr: acbAc,
 		}, nil
 	})
+
+	bank_account.RegisterBankAccountDecoder(SourceOfFundCodeVIB, decodeVIB)
+	bank_account.RegisterBankAccountEncoder(SourceOfFundCodeVIB, encodeVIB)
 }
 
 // VIBAccountStatus the status of account at VIB bank
@@ -53,4 +59,21 @@ func (a VibAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
 		return false
 	}
 	return v.BankAccount == a.BankAccount && v.AccountName == a.AccountName
+}
+
+func decodeVIB(data []byte) (account.IsSourceOfFundItr, error) {
+	var ac VibAccount
+	err := json.Unmarshal(data, &ac)
+	if err != nil {
+		return VibAccount{}, fmt.Errorf("failed to decode VIB account: %w", err)
+	}
+	return ac, nil
+}
+
+func encodeVIB(ac account.IsSourceOfFundItr) ([]byte, error) {
+	bs, err := json.Marshal(ac)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode VIB account: %w", err)
+	}
+	return bs, nil
 }

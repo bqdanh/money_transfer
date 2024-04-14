@@ -34,6 +34,60 @@ func TestAccountJsonMarshalAndUnMarshal(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name: "VIB Account",
+			account: account.Account{
+				ID:     1,
+				UserID: 1,
+				Status: account.StatusNormal,
+				SourceOfFundData: account.SourceOfFundData{
+					IsSourceOfFundItr: implement_bank_account.VibAccount{
+						BankAccount: bank_account.BankAccount{
+							AccountNumber: "account_number_xyz",
+							AccountName:   "account name xyz",
+						},
+						Status: implement_bank_account.VIBAccountStatusInactive,
+					},
+				},
+			},
+			err: nil,
+		},
+		{
+			name: "ACB Account",
+			account: account.Account{
+				ID:     1,
+				UserID: 1,
+				Status: account.StatusNormal,
+				SourceOfFundData: account.SourceOfFundData{
+					IsSourceOfFundItr: implement_bank_account.ACBAccount{
+						BankAccount: bank_account.BankAccount{
+							AccountNumber: "account_number_xyz",
+							AccountName:   "account name xyz",
+						},
+						Status: implement_bank_account.ACBAccountStatusActive,
+					},
+				},
+			},
+			err: nil,
+		},
+		{
+			name: "VIB Account",
+			account: account.Account{
+				ID:     1,
+				UserID: 1,
+				Status: account.StatusNormal,
+				SourceOfFundData: account.SourceOfFundData{
+					IsSourceOfFundItr: implement_bank_account.VibAccount{
+						BankAccount: bank_account.BankAccount{
+							AccountNumber: "account_number_xyz",
+							AccountName:   "account name xyz",
+						},
+						Status: implement_bank_account.VIBAccountStatusActive,
+					},
+				},
+			},
+			err: nil,
+		},
 	}
 
 	for _, tc := range testcases {
