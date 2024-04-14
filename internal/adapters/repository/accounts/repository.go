@@ -28,11 +28,32 @@ func (r AccountMysqlRepository) GetAccountsByUserID(ctx context.Context, userID 
 	if err != nil {
 		return nil, fmt.Errorf("get accounts by user id: %w", err)
 	}
-	_ = daAccounts
-	return nil, fmt.Errorf("not implemented")
+	acs, err := fromAccountsDA2AccountsEntity(daAccounts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse accounts: %w", err)
+	}
+	return acs, nil
 }
 
 // CreateAccount create account for user, return account with ID, ID is unique
 func (r AccountMysqlRepository) CreateAccount(ctx context.Context, ac account.Account) (account.Account, error) {
-	return account.Account{}, fmt.Errorf("not implemented")
+	q := moneytransfer.New(r.db)
+	daAccount, err := fromAccountEntity2AccountDA(ac)
+	if err != nil {
+		return account.Account{}, fmt.Errorf("failed to parse account: %w", err)
+	}
+	result, err := q.InsertAccount(ctx, &moneytransfer.InsertAccountParams{
+		UserID:      daAccount.UserID,
+		AccountType: daAccount.AccountType,
+		AccountData: daAccount.AccountData,
+	})
+	if err != nil {
+		return account.Account{}, fmt.Errorf("insert account: %w", err)
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return account.Account{}, fmt.Errorf("get last insert id: %w", err)
+	}
+	ac.ID = id
+	return ac, nil
 }
