@@ -34,7 +34,7 @@ func NewDistributeLockWithRedis(cfg Config, client *goredislib.Client) Distribut
 	}
 }
 
-func (d DistributeLockWithRedis) AcquireCreateAccountLockByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (func(), error) {
+func (d DistributeLockWithRedis) AcquireLockForCreateAccountByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (func(), error) {
 	key := fmt.Sprintf("money-transfer.lock.account.create.%d", userID)
 	mutex := d.rsClient.NewMutex(
 		key,

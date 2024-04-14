@@ -1,5 +1,11 @@
 package account
 
+import (
+	"fmt"
+
+	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
+)
+
 type Account struct {
 	ID               int64            `json:"id"`
 	UserID           int64            `json:"user_id"`
@@ -51,9 +57,29 @@ type IsSourceOfFundItr interface {
 	GetSourceOfFundCode() SourceOfFundCode
 	GetSourceOfFundType() SourceOfFundType
 	IsTheSameSof(other IsSourceOfFundItr) bool
+	IsAvailableForDeposit() error
 }
 
 type IsSourceOfFundImplementMustImport struct {
 }
 
 func (b IsSourceOfFundImplementMustImport) isSourceOfFund() {}
+
+func (a Account) IsAvailableForDeposit() error {
+	if a.Status != StatusNormal {
+		return exceptions.NewPreconditionError(
+			exceptions.PreconditionReasonAccountStatusNotReadyForDeposit,
+			exceptions.SubjectAccount,
+			"account is not ready for deposit",
+			map[string]interface{}{
+				"account_id": a.ID,
+				"status":     a.Status,
+				"expected":   StatusNormal,
+			},
+		)
+	}
+	if err := a.SourceOfFundData.IsAvailableForDeposit(); err != nil {
+		return fmt.Errorf("source of fund is not available for deposit: %w", err)
+	}
+	return nil
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
@@ -28,6 +29,23 @@ func init() {
 
 	bank_account.RegisterBankAccountDecoder(SourceOfFundCodeVIB, decodeVIB)
 	bank_account.RegisterBankAccountEncoder(SourceOfFundCodeVIB, encodeVIB)
+}
+
+func decodeVIB(data []byte) (account.IsSourceOfFundItr, error) {
+	var ac VibAccount
+	err := json.Unmarshal(data, &ac)
+	if err != nil {
+		return VibAccount{}, fmt.Errorf("failed to decode VIB account: %w", err)
+	}
+	return ac, nil
+}
+
+func encodeVIB(ac account.IsSourceOfFundItr) ([]byte, error) {
+	bs, err := json.Marshal(ac)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode VIB account: %w", err)
+	}
+	return bs, nil
 }
 
 // VIBAccountStatus the status of account at VIB bank
@@ -61,19 +79,18 @@ func (a VibAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
 	return v.BankAccount == a.BankAccount && v.AccountName == a.AccountName
 }
 
-func decodeVIB(data []byte) (account.IsSourceOfFundItr, error) {
-	var ac VibAccount
-	err := json.Unmarshal(data, &ac)
-	if err != nil {
-		return VibAccount{}, fmt.Errorf("failed to decode VIB account: %w", err)
+func (a VibAccount) IsAvailableForDeposit() error {
+	if a.Status != VIBAccountStatusActive {
+		return exceptions.NewPreconditionError(
+			exceptions.PreconditionReasonSOFBankStatusNotReadyForDeposit,
+			exceptions.SubjectSofBank,
+			"sof status not ready for deposit",
+			map[string]interface{}{
+				"sof_code": a.GetSourceOfFundCode(),
+				"status":   a.Status,
+				"expected": VIBAccountStatusActive,
+			},
+		)
 	}
-	return ac, nil
-}
-
-func encodeVIB(ac account.IsSourceOfFundItr) ([]byte, error) {
-	bs, err := json.Marshal(ac)
-	if err != nil {
-		return nil, fmt.Errorf("failed to encode VIB account: %w", err)
-	}
-	return bs, nil
+	return nil
 }

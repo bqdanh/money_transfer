@@ -8,14 +8,21 @@ const (
 	SubjectUser           = "user"
 	SubjectAccount        = "account"
 	SubjectAuthentication = "authentication"
+	SubjectSofBank        = "sof-bank"
+	SubjectTransaction    = "transaction"
 
-	PreconditionReasonUserDuplicatedUserName = PreconditionReason("user-name-duplicated")
-	PreconditionReasonCannotChangeUserID     = PreconditionReason("cannot-change-user-id")
-	PreconditionReasonUserNotFound           = PreconditionReason("user-not-found")
-	PreconditionReasonPasswordNotMatch       = PreconditionReason("password-not-match")
-	PreconditionReasonInvalidToken           = PreconditionReason("invalid-token")
-	PreconditionReasonTokenExpired           = PreconditionReason("token-expired")
-	PreconditionReasonAccountIsLinked        = PreconditionReason("account-is-linked")
+	PreconditionReasonUserDuplicatedUserName          = PreconditionReason("user-name-duplicated")
+	PreconditionReasonCannotChangeUserID              = PreconditionReason("cannot-change-user-id")
+	PreconditionReasonUserNotFound                    = PreconditionReason("user-not-found")
+	PreconditionReasonPasswordNotMatch                = PreconditionReason("password-not-match")
+	PreconditionReasonInvalidToken                    = PreconditionReason("invalid-token")
+	PreconditionReasonTokenExpired                    = PreconditionReason("token-expired")
+	PreconditionReasonAccountIsLinked                 = PreconditionReason("account-is-linked")
+	PreconditionReasonAccountStatusNotReadyForDeposit = PreconditionReason("account-status-not-ready-for-deposit")
+	PreconditionReasonPermissionDenied                = PreconditionReason("permission-denied")
+	PreconditionReasonSOFBankStatusNotReadyForDeposit = PreconditionReason("sof-bank-status-not-ready-for-deposit")
+	PreconditionReasonTransactionNotFound             = PreconditionReason("transaction-not-found")
+	PreconditionReasonTransactionIsAvailable          = PreconditionReason("transaction-is-available")
 )
 
 type PreconditionError struct {

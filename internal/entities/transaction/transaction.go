@@ -14,6 +14,17 @@ type Transaction struct {
 	Data        Data            `json:"data"`
 }
 
+func CreateTransaction(account account.Account, amount currency.Amount, description string, t Type, data Data) Transaction {
+	return Transaction{
+		ID:          0,
+		Account:     account,
+		Amount:      amount,
+		Description: description,
+		Type:        t,
+		Data:        data,
+	}
+}
+
 type Type string
 
 const (

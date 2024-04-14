@@ -15,7 +15,7 @@ type Config struct {
 }
 
 var DefaultConfig = Config{
-	LockDuration: 10 * time.Second,
+	LockDuration: 30 * time.Second,
 }
 
 type LinkBankAccount struct {
@@ -33,7 +33,7 @@ type accountRepository interface {
 }
 
 type distributeLock interface {
-	AcquireCreateAccountLockByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (releaseLock func(), err error)
+	AcquireLockForCreateAccountByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (releaseLock func(), err error)
 }
 
 func NewLinkBankAccount(cfg Config, a accountRepository, dl distributeLock) LinkBankAccount {
@@ -108,7 +108,7 @@ func (l LinkBankAccount) Handle(ctx context.Context, p LinkBankAccountParams) (a
 	if err != nil {
 		return account.Account{}, fmt.Errorf("failed to create source of fund bank account: %w", err)
 	}
-	releaseLock, err := l.distributeLock.AcquireCreateAccountLockByUserID(ctx, p.UserID, l.cfg.LockDuration)
+	releaseLock, err := l.distributeLock.AcquireLockForCreateAccountByUserID(ctx, p.UserID, l.cfg.LockDuration)
 	if err != nil {
 		return account.Account{}, fmt.Errorf("failed to acquire lock for create account: %w", err)
 	}

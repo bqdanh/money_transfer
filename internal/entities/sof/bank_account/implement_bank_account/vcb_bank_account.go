@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
@@ -27,6 +28,24 @@ func init() {
 	})
 	bank_account.RegisterBankAccountDecoder(SourceOfFundCodeVCB, decodeVCB)
 	bank_account.RegisterBankAccountEncoder(SourceOfFundCodeVCB, encodeVCB)
+}
+
+func decodeVCB(bs []byte) (account.IsSourceOfFundItr, error) {
+	var vcbAc VcbAccount
+	err := json.Unmarshal(bs, &vcbAc)
+	if err != nil {
+		return VcbAccount{}, fmt.Errorf("failed to unmarshal VCB account: %w", err)
+	}
+
+	return vcbAc, nil
+}
+
+func encodeVCB(sof account.IsSourceOfFundItr) ([]byte, error) {
+	bs, err := json.Marshal(sof)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal VCB account: %w", err)
+	}
+	return bs, nil
 }
 
 // VCBAccountStatus the status of account at VCB bank
@@ -61,20 +80,18 @@ func (a VcbAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
 	return v.BankAccount == a.BankAccount && v.AccountName == a.AccountName
 }
 
-func decodeVCB(bs []byte) (account.IsSourceOfFundItr, error) {
-	var vcbAc VcbAccount
-	err := json.Unmarshal(bs, &vcbAc)
-	if err != nil {
-		return VcbAccount{}, fmt.Errorf("failed to unmarshal VCB account: %w", err)
+func (a VcbAccount) IsAvailableForDeposit() error {
+	if a.Status != VCBAccountStatusActive {
+		return exceptions.NewPreconditionError(
+			exceptions.PreconditionReasonSOFBankStatusNotReadyForDeposit,
+			exceptions.SubjectSofBank,
+			"sof status not ready for deposit",
+			map[string]interface{}{
+				"sof_code": a.GetSourceOfFundCode(),
+				"status":   a.Status,
+				"expected": VCBAccountStatusActive,
+			},
+		)
 	}
-
-	return vcbAc, nil
-}
-
-func encodeVCB(sof account.IsSourceOfFundItr) ([]byte, error) {
-	bs, err := json.Marshal(sof)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal VCB account: %w", err)
-	}
-	return bs, nil
+	return nil
 }

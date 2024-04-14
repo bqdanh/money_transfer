@@ -49,3 +49,39 @@ func FromFloat64(amount float64, currency Unit) (Amount, error) {
 	}
 	return v, nil
 }
+
+func (a Amount) IsGt(v float64) (bool, error) {
+	parser, err := GetCurrencyParser(a.Currency)
+	if err != nil {
+		return false, fmt.Errorf("get currency(%s) parser: %w", a.Currency, err)
+	}
+	amount, err := parser(v)
+	if err != nil {
+		return false, fmt.Errorf("parse currency(%s) amount: %w", a.Currency, err)
+	}
+	if a.Amount > amount.Amount {
+		return true, nil
+	}
+	if a.Amount == amount.Amount && a.FractionalUnits > amount.FractionalUnits {
+		return true, nil
+	}
+	return false, nil
+}
+
+func (a Amount) IsLte(v float64) (bool, error) {
+	parser, err := GetCurrencyParser(a.Currency)
+	if err != nil {
+		return false, fmt.Errorf("get currency(%s) parser: %w", a.Currency, err)
+	}
+	amount, err := parser(v)
+	if err != nil {
+		return false, fmt.Errorf("parse currency(%s) amount: %w", a.Currency, err)
+	}
+	if a.Amount < amount.Amount {
+		return true, nil
+	}
+	if a.Amount == amount.Amount && a.FractionalUnits <= amount.FractionalUnits {
+		return true, nil
+	}
+	return false, nil
+}

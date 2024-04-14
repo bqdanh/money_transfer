@@ -89,17 +89,17 @@ func (m *MockdistributeLock) EXPECT() *MockdistributeLockMockRecorder {
 	return m.recorder
 }
 
-// AcquireCreateAccountLockByUserID mocks base method.
-func (m *MockdistributeLock) AcquireCreateAccountLockByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (func(), error) {
+// AcquireLockForCreateAccountByUserID mocks base method.
+func (m *MockdistributeLock) AcquireLockForCreateAccountByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (func(), error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AcquireCreateAccountLockByUserID", ctx, userID, lockDuration)
+	ret := m.ctrl.Call(m, "AcquireLockForCreateAccountByUserID", ctx, userID, lockDuration)
 	ret0, _ := ret[0].(func())
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AcquireCreateAccountLockByUserID indicates an expected call of AcquireCreateAccountLockByUserID.
-func (mr *MockdistributeLockMockRecorder) AcquireCreateAccountLockByUserID(ctx, userID, lockDuration interface{}) *gomock.Call {
+// AcquireLockForCreateAccountByUserID indicates an expected call of AcquireLockForCreateAccountByUserID.
+func (mr *MockdistributeLockMockRecorder) AcquireLockForCreateAccountByUserID(ctx, userID, lockDuration interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AcquireCreateAccountLockByUserID", reflect.TypeOf((*MockdistributeLock)(nil).AcquireCreateAccountLockByUserID), ctx, userID, lockDuration)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AcquireLockForCreateAccountByUserID", reflect.TypeOf((*MockdistributeLock)(nil).AcquireLockForCreateAccountByUserID), ctx, userID, lockDuration)
 }
