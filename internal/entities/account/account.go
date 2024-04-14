@@ -32,6 +32,20 @@ type SourceOfFundData struct {
 	IsSourceOfFundItr
 }
 
+func (s SourceOfFundData) GetSourceOfFundCode() SourceOfFundCode {
+	if s.IsSourceOfFundItr == nil {
+		return ""
+	}
+	return s.IsSourceOfFundItr.GetSourceOfFundCode()
+}
+
+func (s SourceOfFundData) GetSourceOfFundType() SourceOfFundType {
+	if s.IsSourceOfFundItr == nil {
+		return ""
+	}
+	return s.IsSourceOfFundItr.GetSourceOfFundType()
+}
+
 type IsSourceOfFundItr interface {
 	isSourceOfFund()
 	GetSourceOfFundCode() SourceOfFundCode

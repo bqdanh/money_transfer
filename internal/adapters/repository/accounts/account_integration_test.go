@@ -13,6 +13,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/osenv"
+	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,8 +40,9 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 	accountTestID := int64(11)
 
 	testcases := []struct {
-		name     string
-		accounts []account.Account
+		name      string
+		accounts  []account.Account
+		createErr error
 	}{
 		{
 			name: "create account success",
@@ -108,6 +110,21 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "create account failed",
+			accounts: []account.Account{
+				{
+					ID:     0,
+					UserID: accountTestID,
+					Status: account.StatusNormal,
+				},
+			},
+			createErr: &mysql.MySQLError{
+				Number:   1265,
+				SQLState: [5]byte{'0', '1', '0', '0', '0'},
+				Message:  "Data truncated for column 'account_type' at row 1",
+			},
+		},
 	}
 	db, err := getSqlDatabaseTest(t)
 	if err != nil {
@@ -134,7 +151,7 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 
 			for _, ac := range tc.accounts {
 				newac, err := repo.CreateAccount(context.Background(), ac)
-				assert.NoError(t, err)
+				assert.ErrorIs(t, err, tc.createErr)
 				if err != nil {
 					return
 				}

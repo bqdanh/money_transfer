@@ -63,6 +63,9 @@ type sofJsonData struct {
 }
 
 func (s SourceOfFundData) MarshalJSON() ([]byte, error) {
+	if s.IsSourceOfFundItr == nil {
+		return []byte("{}"), nil
+	}
 	encoder, ok := getSourceOfFundEncoder(s.GetSourceOfFundType())
 	if !ok {
 		return nil, fmt.Errorf("source of fund type (%s) not registered: %w", s.GetSourceOfFundType(), ErrInvalidSofType)
