@@ -1,15 +1,17 @@
 package transaction
 
-import "github.com/bqdanh/money_transfer/internal/entities/account"
+import (
+	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/currency"
+)
 
 type Transaction struct {
-	ID      int64
-	Account account.Account
-
-	Amount      int64
-	Description string
-	Type        Type
-	Data        Data
+	ID          int64           `json:"id"`
+	Account     account.Account `json:"account"`
+	Amount      currency.Amount `json:"amount"`
+	Description string          `json:"description"`
+	Type        Type            `json:"type"`
+	Data        Data            `json:"data"`
 }
 
 type Type string
@@ -27,6 +29,7 @@ type IsTransactionDataItr interface {
 	isTransactionData()
 	GetType() Type
 }
+
 type IsTransactionDataImplementMustImport struct {
 }
 
