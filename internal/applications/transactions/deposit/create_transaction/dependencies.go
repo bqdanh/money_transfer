@@ -1,4 +1,4 @@
-package deposit
+package create_transaction
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/entities/transaction"
 )
 
-//go:generate mockgen -destination=mocks.go -package=deposit -source=dependencies.go .
+//go:generate mockgen -destination=mocks.go -package=create_transaction -source=dependencies.go .
 
 type distributeLock interface {
 	AcquireLockForCreateDepositTransaction(ctx context.Context, requestID string, lockDuration time.Duration) (releaseLock func(), err error)

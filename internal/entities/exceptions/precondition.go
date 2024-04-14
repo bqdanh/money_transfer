@@ -23,6 +23,8 @@ const (
 	PreconditionReasonSOFBankStatusNotReadyForDeposit = PreconditionReason("sof-bank-status-not-ready-for-deposit")
 	PreconditionReasonTransactionNotFound             = PreconditionReason("transaction-not-found")
 	PreconditionReasonTransactionIsAvailable          = PreconditionReason("transaction-is-available")
+	PreconditionReasonTransactionTypeNotMatch         = PreconditionReason("transaction-type-not-match")
+	PreconditionReasonTransactionStatusNotMatch       = PreconditionReason("transaction-status-not-match")
 )
 
 type PreconditionError struct {
