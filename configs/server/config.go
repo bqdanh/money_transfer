@@ -6,23 +6,37 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bqdanh/money_transfer/internal/adapters/distribute_lock"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
+	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
+	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/logger"
+	pkgredis "github.com/bqdanh/money_transfer/pkg/redis"
 	"github.com/spf13/viper"
 )
 
+var (
+	//load sof registry
+	_ = implement_bank_account.SourceOfFundCodeACB
+	_ = implement_bank_account.SourceOfFundCodeVCB
+	_ = implement_bank_account.SourceOfFundCodeVIB
+)
+
 type Config struct {
-	Env           string                     `json:"env" mapstructure:"env"`
-	GRPC          grpc_server.Config         `json:"grpc" mapstructure:"grpc"`
-	HTTP          http_gateway.Config        `json:"http" mapstructure:"http"`
-	Database      database.Config            `json:"database" mapstructure:"database"`
-	Logger        logger.Config              `json:"logger" mapstructure:"logger"`
-	JwtToken      user_token.Config          `json:"jwt_token" mapstructure:"jwt_token"`
-	GenerateToken generate_user_token.Config `json:"generate_token" mapstructure:"generate_token"`
+	Env             string                     `json:"env" mapstructure:"env"`
+	GRPC            grpc_server.Config         `json:"grpc" mapstructure:"grpc"`
+	HTTP            http_gateway.Config        `json:"http" mapstructure:"http"`
+	Database        database.Config            `json:"database" mapstructure:"database"`
+	Logger          logger.Config              `json:"logger" mapstructure:"logger"`
+	JwtToken        user_token.Config          `json:"jwt_token" mapstructure:"jwt_token"`
+	GenerateToken   generate_user_token.Config `json:"generate_token" mapstructure:"generate_token"`
+	LinkAccount     link_account.Config        `json:"link_account" mapstructure:"link_account"`
+	DistributeLock  distribute_lock.Config     `json:"distribute_lock" mapstructure:"distribute_lock"`
+	RedisConnection pkgredis.Config            `json:"redis_connection" mapstructure:"redis_connection"`
 }
 
 func loadDefaultConfig() *Config {
@@ -36,8 +50,12 @@ func loadDefaultConfig() *Config {
 			Host: "0.0.0.0",
 			Port: 8080,
 		},
-		Database: database.Config{},
-		Logger:   logger.Config{},
+		Database:       database.Config{},
+		Logger:         logger.Config{},
+		JwtToken:       user_token.Config{},
+		GenerateToken:  generate_user_token.Config{},
+		LinkAccount:    link_account.DefaultConfig,
+		DistributeLock: distribute_lock.DefaultConfig,
 	}
 }
 

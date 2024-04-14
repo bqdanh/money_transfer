@@ -8,4 +8,4 @@ CREATE TABLE `account`
     `updated_at`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY pk__account (id),
     INDEX uq__account__user_id (user_id)
-)
+);

@@ -1,10 +1,10 @@
 package account
 
 type Account struct {
-	ID               int64
-	UserID           int64
-	Status           Status
-	SourceOfFundData SourceOfFundData
+	ID               int64            `json:"id"`
+	UserID           int64            `json:"user_id"`
+	Status           Status           `json:"status"`
+	SourceOfFundData SourceOfFundData `json:"source_of_fund_data"`
 }
 
 type Status string

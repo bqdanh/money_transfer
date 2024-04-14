@@ -13,8 +13,16 @@ services:
     volumes:
       - ./db_data:/var/lib/mysql
       - "./internal/adapters/repository/sqlc/schema/table_user.sql:/docker-entrypoint-initdb.d/1.sql"
+      - "./internal/adapters/repository/sqlc/schema/table_account.sql:/docker-entrypoint-initdb.d/2.sql"
     networks:
       - money_network
+  redis:
+    image: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT_NUMBER=6379
+    ports:
+      - '6379:6379'
 
 networks:
   money_network:

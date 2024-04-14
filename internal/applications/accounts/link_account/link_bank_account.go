@@ -3,13 +3,23 @@ package link_account
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
+type Config struct {
+	LockDuration time.Duration `json:"lock_duration" mapstructure:"lock_duration"`
+}
+
+var DefaultConfig = Config{
+	LockDuration: 10 * time.Second,
+}
+
 type LinkBankAccount struct {
+	cfg               Config
 	accountRepository accountRepository
 	distributeLock    distributeLock
 }
@@ -23,11 +33,12 @@ type accountRepository interface {
 }
 
 type distributeLock interface {
-	AcquireCreateAccountLockByUserID(ctx context.Context, userID int64) (releaseLock func(), err error)
+	AcquireCreateAccountLockByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (releaseLock func(), err error)
 }
 
-func NewLinkBankAccount(a accountRepository, dl distributeLock) LinkBankAccount {
+func NewLinkBankAccount(cfg Config, a accountRepository, dl distributeLock) LinkBankAccount {
 	return LinkBankAccount{
+		cfg:               cfg,
 		accountRepository: a,
 		distributeLock:    dl,
 	}
@@ -97,14 +108,14 @@ func (l LinkBankAccount) Handle(ctx context.Context, p LinkBankAccountParams) (a
 	if err != nil {
 		return account.Account{}, fmt.Errorf("failed to create source of fund bank account: %w", err)
 	}
-	releaseLock, err := l.distributeLock.AcquireCreateAccountLockByUserID(ctx, p.UserID)
+	releaseLock, err := l.distributeLock.AcquireCreateAccountLockByUserID(ctx, p.UserID, l.cfg.LockDuration)
 	if err != nil {
-		return account.Account{}, err
+		return account.Account{}, fmt.Errorf("failed to acquire lock for create account: %w", err)
 	}
 	defer releaseLock()
 	accounts, err := l.accountRepository.GetAccountsByUserID(ctx, p.UserID)
 	if err != nil {
-		return account.Account{}, err
+		return account.Account{}, fmt.Errorf("failed to get accounts by user id: %w", err)
 	}
 	for _, a := range accounts {
 		if a.Status == account.StatusUnlinked {

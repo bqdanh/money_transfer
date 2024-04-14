@@ -9,4 +9,4 @@ CREATE TABLE `user`
     `updated_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY pk__user (id),
     UNIQUE uq__user__user_name (user_name)
-)
+);

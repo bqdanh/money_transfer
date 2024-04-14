@@ -10,7 +10,7 @@ import (
 
 func fromAccountDA2AccountEntity(daAccount *moneytransfer.Account) (account.Account, error) {
 	ac := account.Account{}
-	err := json.Unmarshal(daAccount.AccountData, &ac.SourceOfFundData)
+	err := json.Unmarshal(daAccount.AccountData, &ac)
 	if err != nil {
 		return account.Account{}, fmt.Errorf("failed to unmarshal account data: %w", err)
 	}
@@ -24,6 +24,7 @@ func fromAccountsDA2AccountsEntity(daAccounts []*moneytransfer.Account) ([]accou
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse account: %w", err)
 		}
+		ac.ID = daAccount.ID
 		accounts = append(accounts, ac)
 	}
 	return accounts, nil

@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/bqdanh/money_transfer/configs/server"
+	"github.com/bqdanh/money_transfer/internal/adapters/distribute_lock"
 	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/accounts"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/users"
@@ -17,6 +18,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	accountgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/accounts"
 	usersgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/users"
+	accountrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/accounts"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
 	"github.com/bqdanh/money_transfer/internal/adapters/username_pw_validator"
@@ -28,6 +30,8 @@ import (
 	"github.com/bqdanh/money_transfer/internal/applications/users/validate_username_password"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/logger"
+	pkgredis "github.com/bqdanh/money_transfer/pkg/redis"
+	"github.com/redis/go-redis/v9"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -52,7 +56,8 @@ var (
 )
 
 type InfrastructureDependencies struct {
-	db *sql.DB
+	db          *sql.DB
+	redisClient *redis.Client
 }
 
 func StartServerAction(cmdCLI *cli.Context) error {
@@ -157,9 +162,14 @@ func InitInfrastructure(cfg *server.Config) (*InfrastructureDependencies, error)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init database: %w", err)
 	}
+	redisClient, err := pkgredis.NewRedisClient(cfg.RedisConnection)
+	if err != nil {
+		return nil, fmt.Errorf("failed to init redis client: %w", err)
+	}
 
 	return &InfrastructureDependencies{
-		db: db,
+		db:          db,
+		redisClient: redisClient,
 	}, nil
 }
 
@@ -207,8 +217,14 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies) ([]gr
 	userService := users.NewUserService(userApplications)
 
 	//account application
+	acrepo, err := accountrepo.NewAccountMysqlRepository(infra.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new account repository: %w", err)
+	}
+	distribute := distribute_lock.NewDistributeLockWithRedis(cfg.DistributeLock, infra.redisClient)
+
 	accountApplication := accounts.AccountApplications{
-		LinkAccount: link_account.LinkBankAccount{},
+		LinkAccount: link_account.NewLinkBankAccount(cfg.LinkAccount, acrepo, distribute),
 	}
 	// new account service
 	accountService := accounts.NewAccountService(accountApplication)

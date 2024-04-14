@@ -32,3 +32,7 @@ jwt_token:
 generate_token:
   token_duration: 1h
 
+redis_connection:
+  addr: 0.0.0.0:6379
+  db: 0
+  pool_size: 10

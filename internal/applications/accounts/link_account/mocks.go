@@ -7,6 +7,7 @@ package link_account
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	account "github.com/bqdanh/money_transfer/internal/entities/account"
 	gomock "github.com/golang/mock/gomock"
@@ -89,16 +90,16 @@ func (m *MockdistributeLock) EXPECT() *MockdistributeLockMockRecorder {
 }
 
 // AcquireCreateAccountLockByUserID mocks base method.
-func (m *MockdistributeLock) AcquireCreateAccountLockByUserID(ctx context.Context, userID int64) (func(), error) {
+func (m *MockdistributeLock) AcquireCreateAccountLockByUserID(ctx context.Context, userID int64, lockDuration time.Duration) (func(), error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AcquireCreateAccountLockByUserID", ctx, userID)
+	ret := m.ctrl.Call(m, "AcquireCreateAccountLockByUserID", ctx, userID, lockDuration)
 	ret0, _ := ret[0].(func())
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AcquireCreateAccountLockByUserID indicates an expected call of AcquireCreateAccountLockByUserID.
-func (mr *MockdistributeLockMockRecorder) AcquireCreateAccountLockByUserID(ctx, userID interface{}) *gomock.Call {
+func (mr *MockdistributeLockMockRecorder) AcquireCreateAccountLockByUserID(ctx, userID, lockDuration interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AcquireCreateAccountLockByUserID", reflect.TypeOf((*MockdistributeLock)(nil).AcquireCreateAccountLockByUserID), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AcquireCreateAccountLockByUserID", reflect.TypeOf((*MockdistributeLock)(nil).AcquireCreateAccountLockByUserID), ctx, userID, lockDuration)
 }

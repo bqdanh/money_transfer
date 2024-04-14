@@ -5,6 +5,7 @@ import (
 
 	"github.com/bqdanh/money_transfer/api/grpc/account"
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils"
+	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils/exceptions_parser"
 	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/pkg/logger"
 )
@@ -18,7 +19,7 @@ func (s *AccountService) LinkBankAccount(ctx context.Context, req *account.LinkB
 	})
 	if err != nil {
 		logger.FromContext(ctx).Errorw("link bank account", "err", err)
-		return nil, err
+		return nil, exceptions_parser.Err2GrpcStatus(err).Err()
 	}
 	return &account.LinkBankAccountResponse{
 		Code:    utils.CodeSuccess,
