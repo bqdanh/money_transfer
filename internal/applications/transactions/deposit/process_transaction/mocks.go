@@ -102,3 +102,41 @@ func (mr *MocktransactionRepositoryMockRecorder) UpdateTransaction(ctx, t interf
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransaction", reflect.TypeOf((*MocktransactionRepository)(nil).UpdateTransaction), ctx, t)
 }
+
+// MocksofProvider is a mock of sofProvider interface.
+type MocksofProvider struct {
+	ctrl     *gomock.Controller
+	recorder *MocksofProviderMockRecorder
+}
+
+// MocksofProviderMockRecorder is the mock recorder for MocksofProvider.
+type MocksofProviderMockRecorder struct {
+	mock *MocksofProvider
+}
+
+// NewMocksofProvider creates a new mock instance.
+func NewMocksofProvider(ctrl *gomock.Controller) *MocksofProvider {
+	mock := &MocksofProvider{ctrl: ctrl}
+	mock.recorder = &MocksofProviderMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MocksofProvider) EXPECT() *MocksofProviderMockRecorder {
+	return m.recorder
+}
+
+// MakeDepositTransaction mocks base method.
+func (m *MocksofProvider) MakeDepositTransaction(ctx context.Context, trans transaction.Transaction) (transaction.MakeDepositResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MakeDepositTransaction", ctx, trans)
+	ret0, _ := ret[0].(transaction.MakeDepositResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MakeDepositTransaction indicates an expected call of MakeDepositTransaction.
+func (mr *MocksofProviderMockRecorder) MakeDepositTransaction(ctx, trans interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeDepositTransaction", reflect.TypeOf((*MocksofProvider)(nil).MakeDepositTransaction), ctx, trans)
+}

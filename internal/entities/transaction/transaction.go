@@ -108,3 +108,26 @@ func (t Transaction) MakeTransactionDepositProcessing() (Transaction, error) {
 	t.Status = StatusProcessing
 	return t, nil
 }
+
+type MakeDepositResult struct {
+	Status Status
+	Data   Data
+}
+
+func (t Transaction) MakeTransactionDeposit(result MakeDepositResult) (Transaction, error) {
+	if t.Status != StatusProcessing {
+		return t, exceptions.NewPreconditionError(
+			exceptions.PreconditionReasonTransactionStatusNotMatch,
+			exceptions.SubjectTransaction,
+			"transaction status not match",
+			map[string]interface{}{
+				"transaction_status": t.Status,
+				"expected_status":    StatusProcessing,
+			},
+		)
+	}
+
+	t.Status = result.Status
+	t.Data = result.Data
+	return t, nil
+}

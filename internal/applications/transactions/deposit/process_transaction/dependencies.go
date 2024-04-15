@@ -17,3 +17,7 @@ type transactionRepository interface {
 	GetTransactionByID(ctx context.Context, transID int64) (transaction.Transaction, error)
 	UpdateTransaction(ctx context.Context, t transaction.Transaction) error
 }
+
+type sofProvider interface {
+	MakeDepositTransaction(ctx context.Context, trans transaction.Transaction) (transaction.MakeDepositResult, error)
+}
