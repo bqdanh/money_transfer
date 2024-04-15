@@ -68,7 +68,7 @@ func (a Amount) IsGt(v float64) (bool, error) {
 	return false, nil
 }
 
-func (a Amount) IsLte(v float64) (bool, error) {
+func (a Amount) IsLt(v float64) (bool, error) {
 	parser, err := GetCurrencyParser(a.Currency)
 	if err != nil {
 		return false, fmt.Errorf("get currency(%s) parser: %w", a.Currency, err)
@@ -80,7 +80,7 @@ func (a Amount) IsLte(v float64) (bool, error) {
 	if a.Amount < amount.Amount {
 		return true, nil
 	}
-	if a.Amount == amount.Amount && a.FractionalUnits <= amount.FractionalUnits {
+	if a.Amount == amount.Amount && a.FractionalUnits < amount.FractionalUnits {
 		return true, nil
 	}
 	return false, nil

@@ -26,7 +26,7 @@ func CreateTransaction(account account.Account, amount currency.Amount, descript
 		Description: description,
 		Type:        t,
 		Data:        data,
-		Status:      "",
+		Status:      StatusInit,
 	}
 }
 

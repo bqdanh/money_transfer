@@ -197,7 +197,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 				},
 				distributeLock: func(tt *testing.T) *MockdistributeLock {
 					m := NewMockdistributeLock(gomock.NewController(tt))
-					m.EXPECT().AcquireCreateAccountLockByUserID(gomock.Any(), int64(1), 10*time.Second).Return(func() {}, nil)
+					m.EXPECT().AcquireLockForCreateAccountByUserID(gomock.Any(), int64(1), 30*time.Second).Return(func() {}, nil)
 					return m
 				},
 			},
@@ -251,7 +251,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 				},
 				distributeLock: func(tt *testing.T) *MockdistributeLock {
 					m := NewMockdistributeLock(gomock.NewController(tt))
-					m.EXPECT().AcquireCreateAccountLockByUserID(gomock.Any(), int64(1), 10*time.Second).Return(func() {}, nil)
+					m.EXPECT().AcquireLockForCreateAccountByUserID(gomock.Any(), int64(1), 30*time.Second).Return(func() {}, nil)
 					return m
 				},
 			},
@@ -306,7 +306,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 				},
 				distributeLock: func(tt *testing.T) *MockdistributeLock {
 					m := NewMockdistributeLock(gomock.NewController(tt))
-					m.EXPECT().AcquireCreateAccountLockByUserID(gomock.Any(), int64(1), 10*time.Second).Return(func() {}, nil)
+					m.EXPECT().AcquireLockForCreateAccountByUserID(gomock.Any(), int64(1), 30*time.Second).Return(func() {}, nil)
 					return m
 				},
 			},
@@ -383,7 +383,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 				},
 				distributeLock: func(tt *testing.T) *MockdistributeLock {
 					m := NewMockdistributeLock(gomock.NewController(tt))
-					m.EXPECT().AcquireCreateAccountLockByUserID(gomock.Any(), int64(1), 10*time.Second).Return(func() {}, nil)
+					m.EXPECT().AcquireLockForCreateAccountByUserID(gomock.Any(), int64(1), 30*time.Second).Return(func() {}, nil)
 					return m
 				},
 			},

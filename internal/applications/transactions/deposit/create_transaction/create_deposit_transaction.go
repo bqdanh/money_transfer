@@ -2,6 +2,7 @@ package create_transaction
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"time"
@@ -27,9 +28,10 @@ type Config struct {
 }
 
 var DefaultConfig = Config{
-	LockDuration:  30 * time.Second,
-	MinimumAmount: 0,
-	MaximumAmount: 1_000_000_000,
+	LockDuration:       30 * time.Second,
+	MinimumAmount:      1,
+	MaximumAmount:      1_000_000_000,
+	CurrenciesAccepted: []string{string(currency.VND)},
 }
 
 type CreateDepositTransactionParams struct {
@@ -40,6 +42,25 @@ type CreateDepositTransactionParams struct {
 	Amount       currency.Amount
 	Descriptions string
 	Source       string //optional
+}
+
+func NewCreateDepositTransaction(cfg Config, dl distributeLock, ar accountRepository, tr transactionRepository) (CreateDepositTransaction, error) {
+	if dl == nil {
+		return CreateDepositTransaction{}, fmt.Errorf("distribute lock is nil")
+	}
+	if ar == nil {
+		return CreateDepositTransaction{}, fmt.Errorf("account repository is nil")
+	}
+	if tr == nil {
+		return CreateDepositTransaction{}, fmt.Errorf("transaction repository is nil")
+	}
+
+	return CreateDepositTransaction{
+		cfg:                   cfg,
+		distributeLock:        dl,
+		accountRepository:     ar,
+		transactionRepository: tr,
+	}, nil
 }
 
 func (c CreateDepositTransaction) validateCreateDepositTransactionParams(p CreateDepositTransactionParams) error {
@@ -61,13 +82,14 @@ func (c CreateDepositTransaction) validateCreateDepositTransactionParams(p Creat
 			},
 		)
 	}
-	if ok, err := p.Amount.IsLte(c.cfg.MinimumAmount); err != nil || ok {
+	if ok, err := p.Amount.IsLt(c.cfg.MinimumAmount); err != nil || ok {
 		return exceptions.NewInvalidArgumentError(
 			"Amount",
 			fmt.Sprintf("amount must greater than %f", c.cfg.MinimumAmount),
 			map[string]interface{}{
-				"error":  err,
-				"amount": p.Amount,
+				"error":          err,
+				"amount":         p.Amount,
+				"minimum_amount": c.cfg.MinimumAmount,
 			},
 		)
 	}
@@ -81,7 +103,7 @@ func (c CreateDepositTransaction) validateCreateDepositTransactionParams(p Creat
 			},
 		)
 	}
-	if slices.Contains(c.cfg.CurrenciesAccepted, string(p.Amount.Currency)) {
+	if !slices.Contains(c.cfg.CurrenciesAccepted, string(p.Amount.Currency)) {
 		return exceptions.NewInvalidArgumentError(
 			"Amount",
 			fmt.Sprintf("currency %s is not accepted", p.Amount.Currency),
@@ -119,11 +141,17 @@ func (c CreateDepositTransaction) Handle(ctx context.Context, p CreateDepositTra
 	}
 	defer releaseLock()
 
-	if trn, err := c.transactionRepository.GetTransactionByRequestID(ctx, p.RequestID); err == nil {
+	var trn transaction.Transaction
+	trn, err = c.transactionRepository.GetTransactionByRequestID(ctx, p.RequestID)
+	if err == nil {
+		//TODO: we can return the transaction to the client, but we need to check the status of the transaction and created time to make sure this transaction is valid
 		return transaction.Transaction{}, exceptions.NewPreconditionError(exceptions.PreconditionReasonTransactionIsAvailable, exceptions.SubjectTransaction, "request id is duplicated", map[string]interface{}{
 			"request_id":     p.RequestID,
 			"transaction_id": trn.ID,
 		})
+	}
+	if !errors.Is(err, ErrNotFoundTransaction) {
+		return transaction.Transaction{}, fmt.Errorf("get transaction by request id: %w", err)
 	}
 
 	depositTransaction := transaction.CreateTransaction(ac, p.Amount, p.Descriptions, transaction.TypeDeposit, transaction.Data{

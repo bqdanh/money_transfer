@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
 	"github.com/bqdanh/money_transfer/internal/entities/transaction"
 )
 
@@ -25,3 +26,5 @@ type transactionRepository interface {
 	// if notfound return exceptions.PreconditionError SubjectTransaction PreconditionReasonTransactionNotFound
 	GetTransactionByRequestID(ctx context.Context, requestID string) (transaction.Transaction, error)
 }
+
+var ErrNotFoundTransaction = exceptions.NewPreconditionError(exceptions.PreconditionReasonTransactionNotFound, exceptions.SubjectTransaction, "transaction not found", nil)
