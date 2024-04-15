@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 func init() {
 	bank_account.RegisterSourceOfFundBankAccount(SourceOfFundCodeVCB)
 	bank_account.RegisterSourceOfFundBankAccountConstructor(SourceOfFundCodeVCB, func(a bank_account.BankAccount) (account.SourceOfFundData, error) {
-		vcbAc := VcbAccount{
+		vcbAc := VCBAccount{
 			IsSourceOfFundImplementMustImport: account.IsSourceOfFundImplementMustImport{},
 			BankAccount:                       a,
 			Status:                            "",
@@ -31,10 +31,10 @@ func init() {
 }
 
 func decodeVCB(bs []byte) (account.IsSourceOfFundItr, error) {
-	var vcbAc VcbAccount
+	var vcbAc VCBAccount
 	err := json.Unmarshal(bs, &vcbAc)
 	if err != nil {
-		return VcbAccount{}, fmt.Errorf("failed to unmarshal VCB account: %w", err)
+		return VCBAccount{}, fmt.Errorf("failed to unmarshal VCB account: %w", err)
 	}
 
 	return vcbAc, nil
@@ -57,30 +57,30 @@ const (
 	VCBAccountStatusLocked   = VCBAccountStatus("locked")
 )
 
-type VcbAccount struct {
+type VCBAccount struct {
 	account.IsSourceOfFundImplementMustImport
 	bank_account.BankAccount
 	//define VCB specific fields here: example status
 	Status VCBAccountStatus
 }
 
-func (VcbAccount) GetSourceOfFundCode() account.SourceOfFundCode {
+func (VCBAccount) GetSourceOfFundCode() account.SourceOfFundCode {
 	return SourceOfFundCodeVCB
 }
 
-func (a VcbAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
+func (a VCBAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
 	if v, ok := other.(account.SourceOfFundData); ok {
 		return a.IsTheSameSof(v.IsSourceOfFundItr)
 	}
 
-	v, ok := other.(VcbAccount)
+	v, ok := other.(VCBAccount)
 	if !ok {
 		return false
 	}
 	return v.BankAccount == a.BankAccount && v.AccountName == a.AccountName
 }
 
-func (a VcbAccount) IsAvailableForDeposit() error {
+func (a VCBAccount) IsAvailableForDeposit() error {
 	if a.Status != VCBAccountStatusActive {
 		return exceptions.NewPreconditionError(
 			exceptions.PreconditionReasonSOFBankStatusNotReadyForDeposit,

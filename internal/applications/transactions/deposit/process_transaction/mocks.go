@@ -90,17 +90,17 @@ func (mr *MocktransactionRepositoryMockRecorder) GetTransactionByID(ctx, transID
 }
 
 // UpdateTransaction mocks base method.
-func (m *MocktransactionRepository) UpdateTransaction(ctx context.Context, t transaction.Transaction) error {
+func (m *MocktransactionRepository) UpdateTransaction(ctx context.Context, t transaction.Transaction, evt transaction.Event) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTransaction", ctx, t)
+	ret := m.ctrl.Call(m, "UpdateTransaction", ctx, t, evt)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateTransaction indicates an expected call of UpdateTransaction.
-func (mr *MocktransactionRepositoryMockRecorder) UpdateTransaction(ctx, t interface{}) *gomock.Call {
+func (mr *MocktransactionRepositoryMockRecorder) UpdateTransaction(ctx, t, evt interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransaction", reflect.TypeOf((*MocktransactionRepository)(nil).UpdateTransaction), ctx, t)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransaction", reflect.TypeOf((*MocktransactionRepository)(nil).UpdateTransaction), ctx, t, evt)
 }
 
 // MocksofProvider is a mock of sofProvider interface.
@@ -127,10 +127,10 @@ func (m *MocksofProvider) EXPECT() *MocksofProviderMockRecorder {
 }
 
 // MakeDepositTransaction mocks base method.
-func (m *MocksofProvider) MakeDepositTransaction(ctx context.Context, trans transaction.Transaction) (transaction.MakeDepositResult, error) {
+func (m *MocksofProvider) MakeDepositTransaction(ctx context.Context, trans transaction.Transaction) (transaction.Data, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MakeDepositTransaction", ctx, trans)
-	ret0, _ := ret[0].(transaction.MakeDepositResult)
+	ret0, _ := ret[0].(transaction.Data)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

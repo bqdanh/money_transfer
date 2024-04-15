@@ -12,7 +12,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
 	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
+	implement_bank_account2 "github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/logger"
 	pkgredis "github.com/bqdanh/money_transfer/pkg/redis"
@@ -21,9 +21,9 @@ import (
 
 var (
 	//load sof registry
-	_ = implement_bank_account.SourceOfFundCodeACB
-	_ = implement_bank_account.SourceOfFundCodeVCB
-	_ = implement_bank_account.SourceOfFundCodeVIB
+	_ = implement_bank_account2.SourceOfFundCodeACB
+	_ = implement_bank_account2.SourceOfFundCodeVCB
+	_ = implement_bank_account2.SourceOfFundCodeVIB
 )
 
 type Config struct {

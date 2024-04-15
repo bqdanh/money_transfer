@@ -58,25 +58,23 @@ func (p ProcessDepositTransaction) ProcessDepositTransaction(ctx context.Context
 	if err != nil {
 		return transaction.Transaction{}, fmt.Errorf("get transaction by id: %w", err)
 	}
-	if err = trans.ReadyForProcessDeposit(); err != nil {
-		return transaction.Transaction{}, fmt.Errorf("transaction is not ready for process_transaction deposit: %w", err)
-	}
-	trans, err = trans.MakeTransactionDepositProcessing()
+	var evt transaction.Event
+	trans, evt, err = trans.MakeTransactionDepositProcessing()
 	if err != nil {
 		return transaction.Transaction{}, fmt.Errorf("make transaction deposit processing: %w", err)
 	}
-	if err = p.trepo.UpdateTransaction(ctx, trans); err != nil {
+	if err = p.trepo.UpdateTransaction(ctx, trans, evt); err != nil {
 		return transaction.Transaction{}, fmt.Errorf("update transaction: %w", err)
 	}
-	result, err := p.sofProvider.MakeDepositTransaction(ctx, trans)
+	transDataResult, err := p.sofProvider.MakeDepositTransaction(ctx, trans)
 	if err != nil {
 		return transaction.Transaction{}, fmt.Errorf("make deposit transaction: %w", err)
 	}
-	trans, err = trans.MakeTransactionDeposit(result)
+	trans, evt, err = trans.WithTransactionResult(transDataResult)
 	if err != nil {
 		return transaction.Transaction{}, fmt.Errorf("make transaction deposit: %w", err)
 	}
-	if err = p.trepo.UpdateTransaction(ctx, trans); err != nil {
+	if err = p.trepo.UpdateTransaction(ctx, trans, evt); err != nil {
 		return transaction.Transaction{}, fmt.Errorf("update transaction: %w", err)
 	}
 	return trans, nil

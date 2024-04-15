@@ -153,11 +153,13 @@ func (c CreateDepositTransaction) Handle(ctx context.Context, p CreateDepositTra
 	if !errors.Is(err, ErrNotFoundTransaction) {
 		return transaction.Transaction{}, fmt.Errorf("get transaction by request id: %w", err)
 	}
+	depositData, err := deposit.CreateDeposit(ac, p.Source)
+	if err != nil {
+		return transaction.Transaction{}, fmt.Errorf("create deposit data: %w", err)
+	}
 
 	depositTransaction := transaction.CreateTransaction(ac, p.Amount, p.Descriptions, transaction.TypeDeposit, transaction.Data{
-		IsTransactionDataItr: deposit.Deposit{
-			Source: p.Source,
-		},
+		IsTransactionDataItr: depositData,
 	})
 
 	depositTransaction, err = c.transactionRepository.CreateTransaction(ctx, depositTransaction)

@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
 const (

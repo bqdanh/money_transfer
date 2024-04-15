@@ -25,6 +25,7 @@ const (
 	PreconditionReasonTransactionIsAvailable          = PreconditionReason("transaction-is-available")
 	PreconditionReasonTransactionTypeNotMatch         = PreconditionReason("transaction-type-not-match")
 	PreconditionReasonTransactionStatusNotMatch       = PreconditionReason("transaction-status-not-match")
+	PreconditionReasonTransactionInvalidStatus        = PreconditionReason("transaction-invalid-status")
 )
 
 type PreconditionError struct {

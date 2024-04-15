@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
+	implement_bank_account2 "github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/osenv"
 	"github.com/go-sql-driver/mysql"
@@ -52,12 +52,12 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 					UserID: accountTestID,
 					Status: account.StatusNormal,
 					SourceOfFundData: account.SourceOfFundData{
-						IsSourceOfFundItr: implement_bank_account.VibAccount{
+						IsSourceOfFundItr: implement_bank_account2.VIBAccount{
 							BankAccount: bank_account.BankAccount{
 								AccountNumber: "account_number",
 								AccountName:   "account_name",
 							},
-							Status: implement_bank_account.VIBAccountStatusActive,
+							Status: implement_bank_account2.VIBAccountStatusActive,
 						},
 					},
 				},
@@ -71,12 +71,12 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 					UserID: accountTestID,
 					Status: account.StatusNormal,
 					SourceOfFundData: account.SourceOfFundData{
-						IsSourceOfFundItr: implement_bank_account.VibAccount{
+						IsSourceOfFundItr: implement_bank_account2.VIBAccount{
 							BankAccount: bank_account.BankAccount{
 								AccountNumber: "account_number",
 								AccountName:   "account_name",
 							},
-							Status: implement_bank_account.VIBAccountStatusActive,
+							Status: implement_bank_account2.VIBAccountStatusActive,
 						},
 					},
 				},
@@ -85,12 +85,12 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 					UserID: accountTestID,
 					Status: account.StatusNormal,
 					SourceOfFundData: account.SourceOfFundData{
-						IsSourceOfFundItr: implement_bank_account.ACBAccount{
+						IsSourceOfFundItr: implement_bank_account2.ACBAccount{
 							BankAccount: bank_account.BankAccount{
 								AccountNumber: "account_number",
 								AccountName:   "account_name",
 							},
-							Status: implement_bank_account.ACBAccountStatusActive,
+							Status: implement_bank_account2.ACBAccountStatusActive,
 						},
 					},
 				},
@@ -99,12 +99,12 @@ func TestCreateAccountAndGetAccountByUserID(t *testing.T) {
 					UserID: accountTestID,
 					Status: account.StatusNormal,
 					SourceOfFundData: account.SourceOfFundData{
-						IsSourceOfFundItr: implement_bank_account.VcbAccount{
+						IsSourceOfFundItr: implement_bank_account2.VCBAccount{
 							BankAccount: bank_account.BankAccount{
 								AccountNumber: "account_number",
 								AccountName:   "account_name",
 							},
-							Status: implement_bank_account.VCBAccountStatusActive,
+							Status: implement_bank_account2.VCBAccountStatusActive,
 						},
 					},
 				},

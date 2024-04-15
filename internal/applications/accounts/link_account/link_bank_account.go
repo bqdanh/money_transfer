@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	bank_account2 "github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
 type Config struct {
@@ -97,11 +97,11 @@ func (l LinkBankAccount) Handle(ctx context.Context, p LinkBankAccountParams) (a
 	if err := validateLinkBankAccountParams(p); err != nil {
 		return account.Account{}, err
 	}
-	bankSofCode, err := bank_account.FromStringToSourceOfFundCode(p.BankCode)
+	bankSofCode, err := bank_account2.FromStringToSourceOfFundCode(p.BankCode)
 	if err != nil {
 		return account.Account{}, fmt.Errorf("failed to convert bank code to source of fund code: %w", err)
 	}
-	newBankSof, err := bank_account.CreateSourceOfFundBankAccount(bankSofCode, bank_account.BankAccount{
+	newBankSof, err := bank_account2.CreateSourceOfFundBankAccount(bankSofCode, bank_account2.BankAccount{
 		AccountNumber: p.BankAccountNumber,
 		AccountName:   p.BankAccountName,
 	})

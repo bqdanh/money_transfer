@@ -7,10 +7,9 @@ import (
 	"time"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
-	_ "github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -225,7 +224,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 						UserID: 1,
 						Status: account.StatusNormal,
 						SourceOfFundData: account.SourceOfFundData{
-							IsSourceOfFundItr: implement_bank_account.VibAccount{
+							IsSourceOfFundItr: implement_bank_account.VIBAccount{
 								BankAccount: bank_account.BankAccount{
 									AccountNumber: "bank_account_number",
 									AccountName:   "bank_account_name",
@@ -238,7 +237,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 						UserID: 1,
 						Status: account.StatusNormal,
 						SourceOfFundData: account.SourceOfFundData{
-							IsSourceOfFundItr: implement_bank_account.VibAccount{
+							IsSourceOfFundItr: implement_bank_account.VIBAccount{
 								BankAccount: bank_account.BankAccount{
 									AccountNumber: "bank_account_number",
 									AccountName:   "bank_account_name",
@@ -261,7 +260,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 					UserID: 1,
 					Status: account.StatusNormal,
 					SourceOfFundData: account.SourceOfFundData{
-						IsSourceOfFundItr: implement_bank_account.VibAccount{
+						IsSourceOfFundItr: implement_bank_account.VIBAccount{
 							BankAccount: bank_account.BankAccount{
 								AccountNumber: "bank_account_number",
 								AccountName:   "bank_account_name",
@@ -292,7 +291,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 							UserID: 1,
 							Status: account.StatusNormal,
 							SourceOfFundData: account.SourceOfFundData{
-								IsSourceOfFundItr: implement_bank_account.VibAccount{
+								IsSourceOfFundItr: implement_bank_account.VIBAccount{
 									BankAccount: bank_account.BankAccount{
 										AccountNumber: "bank_account_number",
 										AccountName:   "bank_account_name",
@@ -342,7 +341,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 							UserID: 1,
 							Status: account.StatusUnlinked,
 							SourceOfFundData: account.SourceOfFundData{
-								IsSourceOfFundItr: implement_bank_account.VibAccount{
+								IsSourceOfFundItr: implement_bank_account.VIBAccount{
 									BankAccount: bank_account.BankAccount{
 										AccountNumber: "bank_account_number",
 										AccountName:   "bank_account_name",
@@ -357,7 +356,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 						UserID: 1,
 						Status: account.StatusNormal,
 						SourceOfFundData: account.SourceOfFundData{
-							IsSourceOfFundItr: implement_bank_account.VibAccount{
+							IsSourceOfFundItr: implement_bank_account.VIBAccount{
 								BankAccount: bank_account.BankAccount{
 									AccountNumber: "bank_account_number",
 									AccountName:   "bank_account_name",
@@ -370,7 +369,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 						UserID: 1,
 						Status: account.StatusNormal,
 						SourceOfFundData: account.SourceOfFundData{
-							IsSourceOfFundItr: implement_bank_account.VibAccount{
+							IsSourceOfFundItr: implement_bank_account.VIBAccount{
 								BankAccount: bank_account.BankAccount{
 									AccountNumber: "bank_account_number",
 									AccountName:   "bank_account_name",
@@ -393,7 +392,7 @@ func TestLinkBankAccount_Handle(t *testing.T) {
 					UserID: 1,
 					Status: account.StatusNormal,
 					SourceOfFundData: account.SourceOfFundData{
-						IsSourceOfFundItr: implement_bank_account.VibAccount{
+						IsSourceOfFundItr: implement_bank_account.VIBAccount{
 							BankAccount: bank_account.BankAccount{
 								AccountNumber: "bank_account_number",
 								AccountName:   "bank_account_name",

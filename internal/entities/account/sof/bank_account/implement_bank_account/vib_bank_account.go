@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 func init() {
 	bank_account.RegisterSourceOfFundBankAccount(SourceOfFundCodeVIB)
 	bank_account.RegisterSourceOfFundBankAccountConstructor(SourceOfFundCodeVIB, func(a bank_account.BankAccount) (account.SourceOfFundData, error) {
-		acbAc := VibAccount{
+		acbAc := VIBAccount{
 			IsSourceOfFundImplementMustImport: account.IsSourceOfFundImplementMustImport{},
 			BankAccount:                       a,
 			Status:                            VIBAccountStatusActive,
@@ -32,10 +32,10 @@ func init() {
 }
 
 func decodeVIB(data []byte) (account.IsSourceOfFundItr, error) {
-	var ac VibAccount
+	var ac VIBAccount
 	err := json.Unmarshal(data, &ac)
 	if err != nil {
-		return VibAccount{}, fmt.Errorf("failed to decode VIB account: %w", err)
+		return VIBAccount{}, fmt.Errorf("failed to decode VIB account: %w", err)
 	}
 	return ac, nil
 }
@@ -56,30 +56,30 @@ const (
 	VIBAccountStatusInactive = VIBAccountStatus("inactive")
 )
 
-type VibAccount struct {
+type VIBAccount struct {
 	account.IsSourceOfFundImplementMustImport
 	bank_account.BankAccount
 	//define VIB specific fields here: example status
 	Status VIBAccountStatus
 }
 
-func (VibAccount) GetSourceOfFundCode() account.SourceOfFundCode {
+func (VIBAccount) GetSourceOfFundCode() account.SourceOfFundCode {
 	return SourceOfFundCodeVIB
 }
 
-func (a VibAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
+func (a VIBAccount) IsTheSameSof(other account.IsSourceOfFundItr) bool {
 	if v, ok := other.(account.SourceOfFundData); ok {
 		return a.IsTheSameSof(v.IsSourceOfFundItr)
 	}
 
-	v, ok := other.(VibAccount)
+	v, ok := other.(VIBAccount)
 	if !ok {
 		return false
 	}
 	return v.BankAccount == a.BankAccount && v.AccountName == a.AccountName
 }
 
-func (a VibAccount) IsAvailableForDeposit() error {
+func (a VIBAccount) IsAvailableForDeposit() error {
 	if a.Status != VIBAccountStatusActive {
 		return exceptions.NewPreconditionError(
 			exceptions.PreconditionReasonSOFBankStatusNotReadyForDeposit,

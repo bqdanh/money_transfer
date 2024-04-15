@@ -6,15 +6,18 @@ import (
 	"testing"
 
 	"github.com/bqdanh/money_transfer/internal/entities/account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account"
+	"github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/currency"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account"
-	"github.com/bqdanh/money_transfer/internal/entities/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/internal/entities/transaction"
 	"github.com/bqdanh/money_transfer/internal/entities/transaction/deposit"
+	"github.com/bqdanh/money_transfer/internal/entities/transaction/deposit/bank_account_vib"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
+
+var _ = bank_account_vib.DepositData{}
 
 func TestCreateDepositTransaction_Handle(t *testing.T) {
 	var errUTForce = fmt.Errorf("ut-force")
@@ -23,7 +26,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 		UserID: 11,
 		Status: account.StatusNormal,
 		SourceOfFundData: account.SourceOfFundData{
-			IsSourceOfFundItr: implement_bank_account.VibAccount{
+			IsSourceOfFundItr: implement_bank_account.VIBAccount{
 				BankAccount: bank_account.BankAccount{
 					AccountNumber: "AccountNumber_XYZ",
 					AccountName:   "AccountName_XYZ",
@@ -37,7 +40,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 		UserID: 11,
 		Status: account.StatusUnlinked,
 		SourceOfFundData: account.SourceOfFundData{
-			IsSourceOfFundItr: implement_bank_account.VibAccount{
+			IsSourceOfFundItr: implement_bank_account.VIBAccount{
 				BankAccount: bank_account.BankAccount{
 					AccountNumber: "AccountNumber_XYZ",
 					AccountName:   "AccountName_XYZ",
@@ -51,7 +54,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 		UserID: 11,
 		Status: account.StatusLocked,
 		SourceOfFundData: account.SourceOfFundData{
-			IsSourceOfFundItr: implement_bank_account.VibAccount{
+			IsSourceOfFundItr: implement_bank_account.VIBAccount{
 				BankAccount: bank_account.BankAccount{
 					AccountNumber: "AccountNumber_XYZ",
 					AccountName:   "AccountName_XYZ",
@@ -691,6 +694,12 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 									IsTransactionDataItr: deposit.Deposit{
 										Source:            "source",
 										BankTransactionID: "",
+										Data: deposit.Data{
+											PartnerData: bank_account_vib.DepositData{
+												Status:           bank_account_vib.DepositStatusInit,
+												TransactionRefID: "",
+											},
+										},
 									},
 								},
 							},
@@ -758,6 +767,12 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 									IsTransactionDataItr: deposit.Deposit{
 										Source:            "source",
 										BankTransactionID: "",
+										Data: deposit.Data{
+											PartnerData: bank_account_vib.DepositData{
+												Status:           bank_account_vib.DepositStatusInit,
+												TransactionRefID: "",
+											},
+										},
 									},
 								},
 							},
@@ -776,6 +791,12 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 								IsTransactionDataItr: deposit.Deposit{
 									Source:            "source",
 									BankTransactionID: "",
+									Data: deposit.Data{
+										PartnerData: bank_account_vib.DepositData{
+											Status:           bank_account_vib.DepositStatusInit,
+											TransactionRefID: "",
+										},
+									},
 								},
 							},
 						}, nil)
@@ -810,6 +831,12 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 					IsTransactionDataItr: deposit.Deposit{
 						Source:            "source",
 						BankTransactionID: "",
+						Data: deposit.Data{
+							PartnerData: bank_account_vib.DepositData{
+								Status:           bank_account_vib.DepositStatusInit,
+								TransactionRefID: "",
+							},
+						},
 					},
 				},
 			},
