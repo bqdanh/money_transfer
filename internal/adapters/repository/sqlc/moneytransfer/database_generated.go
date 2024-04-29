@@ -27,6 +27,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteAccountByUserIDStmt, err = db.PrepareContext(ctx, deleteAccountByUserID); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteAccountByUserID: %w", err)
 	}
+	if q.getAccountByIDStmt, err = db.PrepareContext(ctx, getAccountByID); err != nil {
+		return nil, fmt.Errorf("error preparing query GetAccountByID: %w", err)
+	}
 	if q.getAccountsByUserIDStmt, err = db.PrepareContext(ctx, getAccountsByUserID); err != nil {
 		return nil, fmt.Errorf("error preparing query GetAccountsByUserID: %w", err)
 	}
@@ -47,6 +50,11 @@ func (q *Queries) Close() error {
 	if q.deleteAccountByUserIDStmt != nil {
 		if cerr := q.deleteAccountByUserIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteAccountByUserIDStmt: %w", cerr)
+		}
+	}
+	if q.getAccountByIDStmt != nil {
+		if cerr := q.getAccountByIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAccountByIDStmt: %w", cerr)
 		}
 	}
 	if q.getAccountsByUserIDStmt != nil {
@@ -109,6 +117,7 @@ type Queries struct {
 	db                        DBTX
 	tx                        *sql.Tx
 	deleteAccountByUserIDStmt *sql.Stmt
+	getAccountByIDStmt        *sql.Stmt
 	getAccountsByUserIDStmt   *sql.Stmt
 	getUserByUserNameStmt     *sql.Stmt
 	insertAccountStmt         *sql.Stmt
@@ -120,6 +129,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		db:                        tx,
 		tx:                        tx,
 		deleteAccountByUserIDStmt: q.deleteAccountByUserIDStmt,
+		getAccountByIDStmt:        q.getAccountByIDStmt,
 		getAccountsByUserIDStmt:   q.getAccountsByUserIDStmt,
 		getUserByUserNameStmt:     q.getUserByUserNameStmt,
 		insertAccountStmt:         q.insertAccountStmt,

@@ -142,7 +142,7 @@ func (c CreateDepositTransaction) Handle(ctx context.Context, p CreateDepositTra
 	defer releaseLock()
 
 	var trn transaction.Transaction
-	trn, err = c.transactionRepository.GetTransactionByRequestID(ctx, p.RequestID)
+	trn, err = c.transactionRepository.GetTransactionByRequestID(ctx, ac, p.RequestID)
 	if err == nil {
 		//TODO: we can return the transaction to the client, but we need to check the status of the transaction and created time to make sure this transaction is valid
 		return transaction.Transaction{}, exceptions.NewPreconditionError(exceptions.PreconditionReasonTransactionIsAvailable, exceptions.SubjectTransaction, "request id is duplicated", map[string]interface{}{
@@ -158,7 +158,7 @@ func (c CreateDepositTransaction) Handle(ctx context.Context, p CreateDepositTra
 		return transaction.Transaction{}, fmt.Errorf("create deposit data: %w", err)
 	}
 
-	depositTransaction := transaction.CreateTransaction(ac, p.Amount, p.Descriptions, transaction.TypeDeposit, transaction.Data{
+	depositTransaction := transaction.CreateTransaction(p.RequestID, ac, p.Amount, p.Descriptions, transaction.TypeDeposit, transaction.Data{
 		IsTransactionDataItr: depositData,
 	})
 

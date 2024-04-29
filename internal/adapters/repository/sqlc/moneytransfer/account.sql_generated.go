@@ -21,6 +21,27 @@ func (q *Queries) DeleteAccountByUserID(ctx context.Context, userID int64) (sql.
 	return q.exec(ctx, q.deleteAccountByUserIDStmt, deleteAccountByUserID, userID)
 }
 
+const getAccountByID = `-- name: GetAccountByID :one
+SELECT id, user_id, account_type, account_data, created_at, updated_at
+FROM account
+WHERE id = ?
+LIMIT 1
+`
+
+func (q *Queries) GetAccountByID(ctx context.Context, id int64) (*Account, error) {
+	row := q.queryRow(ctx, q.getAccountByIDStmt, getAccountByID, id)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.AccountType,
+		&i.AccountData,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return &i, err
+}
+
 const getAccountsByUserID = `-- name: GetAccountsByUserID :many
 SELECT id, user_id, account_type, account_data, created_at, updated_at
 FROM account

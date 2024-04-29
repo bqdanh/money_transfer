@@ -129,16 +129,16 @@ func (mr *MocktransactionRepositoryMockRecorder) CreateTransaction(ctx, t interf
 }
 
 // GetTransactionByRequestID mocks base method.
-func (m *MocktransactionRepository) GetTransactionByRequestID(ctx context.Context, requestID string) (transaction.Transaction, error) {
+func (m *MocktransactionRepository) GetTransactionByRequestID(ctx context.Context, account account.Account, requestID string) (transaction.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransactionByRequestID", ctx, requestID)
+	ret := m.ctrl.Call(m, "GetTransactionByRequestID", ctx, account, requestID)
 	ret0, _ := ret[0].(transaction.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTransactionByRequestID indicates an expected call of GetTransactionByRequestID.
-func (mr *MocktransactionRepositoryMockRecorder) GetTransactionByRequestID(ctx, requestID interface{}) *gomock.Call {
+func (mr *MocktransactionRepositoryMockRecorder) GetTransactionByRequestID(ctx, account, requestID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactionByRequestID", reflect.TypeOf((*MocktransactionRepository)(nil).GetTransactionByRequestID), ctx, requestID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactionByRequestID", reflect.TypeOf((*MocktransactionRepository)(nil).GetTransactionByRequestID), ctx, account, requestID)
 }

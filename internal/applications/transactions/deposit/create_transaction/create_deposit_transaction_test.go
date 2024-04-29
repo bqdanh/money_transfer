@@ -566,7 +566,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 				},
 				transactionRepositoryFunc: func(tt *testing.T) transactionRepository {
 					m := NewMocktransactionRepository(gomock.NewController(tt))
-					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), "request-id").
+					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), utAccountNormal, "request-id").
 						Return(transaction.Transaction{
 							ID:      1,
 							Account: utAccountNormal,
@@ -630,7 +630,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 				},
 				transactionRepositoryFunc: func(tt *testing.T) transactionRepository {
 					m := NewMocktransactionRepository(gomock.NewController(tt))
-					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), "request-id").
+					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), utAccountNormal, "request-id").
 						Return(transaction.Transaction{}, errUTForce)
 					return m
 				},
@@ -675,7 +675,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 				},
 				transactionRepositoryFunc: func(tt *testing.T) transactionRepository {
 					m := NewMocktransactionRepository(gomock.NewController(tt))
-					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), "request-id").
+					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), utAccountNormal, "request-id").
 						Return(transaction.Transaction{}, ErrNotFoundTransaction)
 					m.EXPECT().
 						CreateTransaction(
@@ -687,9 +687,12 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 									Currency: currency.VND,
 									Amount:   10_000,
 								},
-								Description: "descriptions",
-								Status:      transaction.StatusInit,
-								Type:        transaction.TypeDeposit,
+								Version:                 0,
+								RequestID:               "request-id",
+								Description:             "descriptions",
+								PartnerRefTransactionID: "",
+								Status:                  transaction.StatusInit,
+								Type:                    transaction.TypeDeposit,
 								Data: transaction.Data{
 									IsTransactionDataItr: deposit.Deposit{
 										Source:            "source",
@@ -748,7 +751,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 				},
 				transactionRepositoryFunc: func(tt *testing.T) transactionRepository {
 					m := NewMocktransactionRepository(gomock.NewController(tt))
-					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), "request-id").
+					m.EXPECT().GetTransactionByRequestID(gomock.AssignableToTypeOf(context.Background()), utAccountNormal, "request-id").
 						Return(transaction.Transaction{}, ErrNotFoundTransaction)
 					m.EXPECT().
 						CreateTransaction(
@@ -761,6 +764,7 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 									Amount:   10_000,
 								},
 								Description: "descriptions",
+								RequestID:   "request-id",
 								Status:      transaction.StatusInit,
 								Type:        transaction.TypeDeposit,
 								Data: transaction.Data{

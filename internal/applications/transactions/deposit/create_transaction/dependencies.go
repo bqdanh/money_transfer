@@ -24,7 +24,7 @@ type transactionRepository interface {
 	CreateTransaction(ctx context.Context, t transaction.Transaction) (transaction.Transaction, error)
 	//GetTransactionByRequestID get transaction in 7day by request id,
 	// if notfound return exceptions.PreconditionError SubjectTransaction PreconditionReasonTransactionNotFound
-	GetTransactionByRequestID(ctx context.Context, requestID string) (transaction.Transaction, error)
+	GetTransactionByRequestID(ctx context.Context, account account.Account, requestID string) (transaction.Transaction, error)
 }
 
 var ErrNotFoundTransaction = exceptions.NewPreconditionError(exceptions.PreconditionReasonTransactionNotFound, exceptions.SubjectTransaction, "transaction not found", nil)

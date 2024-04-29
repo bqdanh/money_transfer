@@ -67,6 +67,42 @@ type Account struct {
 	UpdatedAt   time.Time       `json:"updated_at"`
 }
 
+type Transaction struct {
+	// is identify transaction
+	ID int64 `json:"id"`
+	// is identify account
+	AccountID int64 `json:"account_id"`
+	// amount of transaction
+	Amount string `json:"amount"`
+	// version of transaction
+	Version int32 `json:"version"`
+	// request id of transaction
+	RequestID string `json:"request_id"`
+	// description of transaction
+	Description string `json:"description"`
+	// partner reference transaction id
+	PartnerRefTransactionID string `json:"partner_ref_transaction_id"`
+	// status of transaction
+	Status string `json:"status"`
+	// type of transaction
+	Type string `json:"type"`
+	// data of transaction
+	Data        json.RawMessage `json:"data"`
+	CreatedDate time.Time       `json:"created_date"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+}
+
+type TransactionEvent struct {
+	ID            int64           `json:"id"`
+	TransactionID int64           `json:"transaction_id"`
+	Version       int32           `json:"version"`
+	Data          json.RawMessage `json:"data"`
+	CreatedDate   time.Time       `json:"created_date"`
+	CreatedAt     time.Time       `json:"created_at"`
+	UpdatedAt     time.Time       `json:"updated_at"`
+}
+
 type User struct {
 	// is identify user with primary key auto increment
 	ID int64 `json:"id"`

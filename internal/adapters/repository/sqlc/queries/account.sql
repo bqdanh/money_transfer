@@ -25,3 +25,9 @@ WHERE user_id = ?;
 DELETE
 FROM account
 WHERE user_id = ?;
+
+-- name: GetAccountByID :one
+SELECT *
+FROM account
+WHERE id = ?
+LIMIT 1;

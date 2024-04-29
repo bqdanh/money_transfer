@@ -142,7 +142,7 @@ func TestJsonMarshalVIBDepositTransaction(t *testing.T) {
 		Amount:   10_000,
 	}
 
-	depositTransaction := transaction.CreateTransaction(ac, amount, "ut description", transaction.TypeDeposit, transaction.Data{
+	depositTransaction := transaction.CreateTransaction("request-id", ac, amount, "ut description", transaction.TypeDeposit, transaction.Data{
 		IsTransactionDataItr: depositData,
 	})
 	bs, err := json.Marshal(depositTransaction)
@@ -186,7 +186,7 @@ func TestJsonMarshalACBDepositTransaction(t *testing.T) {
 		Amount:   10_000,
 	}
 
-	depositTransaction := transaction.CreateTransaction(ac, amount, "ut description", transaction.TypeDeposit, transaction.Data{
+	depositTransaction := transaction.CreateTransaction("request-id", ac, amount, "ut description", transaction.TypeDeposit, transaction.Data{
 		IsTransactionDataItr: depositData,
 	})
 	bs, err := json.Marshal(depositTransaction)
@@ -230,7 +230,7 @@ func TestJsonMarshalVCBDepositTransaction(t *testing.T) {
 		Amount:   10_000,
 	}
 
-	depositTransaction := transaction.CreateTransaction(ac, amount, "ut description", transaction.TypeDeposit, transaction.Data{
+	depositTransaction := transaction.CreateTransaction("request-id", ac, amount, "ut description", transaction.TypeDeposit, transaction.Data{
 		IsTransactionDataItr: depositData,
 	})
 	bs, err := json.Marshal(depositTransaction)

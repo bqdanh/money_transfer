@@ -14,6 +14,7 @@ type Transaction struct {
 	Account                 account.Account `json:"account"`
 	Amount                  currency.Amount `json:"amount"`
 	Version                 int             `json:"version"`
+	RequestID               string          `json:"request_id"`
 	Description             string          `json:"description"`
 	PartnerRefTransactionID string          `json:"partner_ref_transaction_id"`
 	Status                  Status          `json:"status"`
@@ -21,16 +22,18 @@ type Transaction struct {
 	Data                    Data            `json:"data"`
 }
 
-func CreateTransaction(account account.Account, amount currency.Amount, description string, t Type, data Data) Transaction {
+func CreateTransaction(requestID string, account account.Account, amount currency.Amount, description string, t Type, data Data) Transaction {
 	return Transaction{
-		ID:          0,
-		Account:     account,
-		Amount:      amount,
-		Version:     0,
-		Description: description,
-		Status:      StatusInit,
-		Type:        t,
-		Data:        data,
+		ID:                      0,
+		Account:                 account,
+		Amount:                  amount,
+		Version:                 0,
+		RequestID:               requestID,
+		Description:             description,
+		PartnerRefTransactionID: "",
+		Status:                  StatusInit,
+		Type:                    t,
+		Data:                    data,
 	}
 }
 
