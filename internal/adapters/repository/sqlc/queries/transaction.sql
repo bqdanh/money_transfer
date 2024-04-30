@@ -44,3 +44,15 @@ FROM `transaction`
 WHERE `account_id` = ?
   AND `request_id` = ?
 limit 1;
+
+-- name: UpdateTransaction :exec
+UPDATE `transaction`
+SET `amount`                     = ?,
+    `version`                    = ?,
+    `request_id`                 = ?,
+    `description`                = ?,
+    `partner_ref_transaction_id` = ?,
+    `status`                     = ?,
+    `type`                       = ?,
+    `data`                       = ?
+WHERE `id` = ?;

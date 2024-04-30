@@ -7,11 +7,11 @@ type EventData interface {
 }
 
 type Event struct {
-	TransactionID   int64
-	TransactionType Type
-	Version         int
-	Name            EventName
-	Data            EventData
+	TransactionID   int64     `json:"transaction_id"`
+	TransactionType Type      `json:"transaction_type"`
+	Version         int       `json:"version"`
+	Name            EventName `json:"name"`
+	Data            EventData `json:"data"`
 }
 
 func NewEvent(transactionID int64, transactionType Type, version int, data EventData) Event {

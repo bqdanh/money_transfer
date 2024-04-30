@@ -11,3 +11,7 @@ CREATE TABLE `transaction_event`
     PRIMARY KEY pk__transaction_event (`id`),
     INDEX `idx__transaction_event__transaction_id__version` (`transaction_id`, `version`)
 );
+
+-- name: CreateTransactionEvent :exec
+INSERT INTO `transaction_event` (`transaction_id`, `version`, `data`, `event_name`)
+VALUES (?, ?, ?, ?);

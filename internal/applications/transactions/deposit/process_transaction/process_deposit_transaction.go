@@ -59,13 +59,16 @@ func (p ProcessDepositTransaction) ProcessDepositTransaction(ctx context.Context
 		return transaction.Transaction{}, fmt.Errorf("get transaction by id: %w", err)
 	}
 	var evt transaction.Event
-	trans, evt, err = trans.MakeTransactionDepositProcessing()
-	if err != nil {
-		return transaction.Transaction{}, fmt.Errorf("make transaction deposit processing: %w", err)
+	if trans.IsInitTransaction() {
+		trans, evt, err = trans.MakeTransactionDepositProcessing()
+		if err != nil {
+			return transaction.Transaction{}, fmt.Errorf("make transaction deposit processing: %w", err)
+		}
+		if err = p.trepo.UpdateTransaction(ctx, trans, evt); err != nil {
+			return transaction.Transaction{}, fmt.Errorf("update transaction: %w", err)
+		}
 	}
-	if err = p.trepo.UpdateTransaction(ctx, trans, evt); err != nil {
-		return transaction.Transaction{}, fmt.Errorf("update transaction: %w", err)
-	}
+
 	transDataResult, err := p.sofProvider.MakeDepositTransaction(ctx, trans)
 	if err != nil {
 		return transaction.Transaction{}, fmt.Errorf("make deposit transaction: %w", err)

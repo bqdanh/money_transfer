@@ -102,3 +102,43 @@ func (q *Queries) GetTransactionByRequestID(ctx context.Context, arg *GetTransac
 	)
 	return &i, err
 }
+
+const updateTransaction = `-- name: UpdateTransaction :exec
+UPDATE ` + "`" + `transaction` + "`" + `
+SET ` + "`" + `amount` + "`" + `                     = ?,
+    ` + "`" + `version` + "`" + `                    = ?,
+    ` + "`" + `request_id` + "`" + `                 = ?,
+    ` + "`" + `description` + "`" + `                = ?,
+    ` + "`" + `partner_ref_transaction_id` + "`" + ` = ?,
+    ` + "`" + `status` + "`" + `                     = ?,
+    ` + "`" + `type` + "`" + `                       = ?,
+    ` + "`" + `data` + "`" + `                       = ?
+WHERE ` + "`" + `id` + "`" + ` = ?
+`
+
+type UpdateTransactionParams struct {
+	Amount                  string          `json:"amount"`
+	Version                 int32           `json:"version"`
+	RequestID               string          `json:"request_id"`
+	Description             string          `json:"description"`
+	PartnerRefTransactionID string          `json:"partner_ref_transaction_id"`
+	Status                  string          `json:"status"`
+	Type                    string          `json:"type"`
+	Data                    json.RawMessage `json:"data"`
+	ID                      int64           `json:"id"`
+}
+
+func (q *Queries) UpdateTransaction(ctx context.Context, arg *UpdateTransactionParams) error {
+	_, err := q.exec(ctx, q.updateTransactionStmt, updateTransaction,
+		arg.Amount,
+		arg.Version,
+		arg.RequestID,
+		arg.Description,
+		arg.PartnerRefTransactionID,
+		arg.Status,
+		arg.Type,
+		arg.Data,
+		arg.ID,
+	)
+	return err
+}

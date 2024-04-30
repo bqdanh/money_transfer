@@ -96,6 +96,7 @@ type TransactionEvent struct {
 	ID            int64           `json:"id"`
 	TransactionID int64           `json:"transaction_id"`
 	Version       int32           `json:"version"`
+	EventName     string          `json:"event_name"`
 	Data          json.RawMessage `json:"data"`
 	CreatedDate   time.Time       `json:"created_date"`
 	CreatedAt     time.Time       `json:"created_at"`

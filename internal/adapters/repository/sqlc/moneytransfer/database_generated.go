@@ -27,6 +27,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createTransactionStmt, err = db.PrepareContext(ctx, createTransaction); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateTransaction: %w", err)
 	}
+	if q.createTransactionEventStmt, err = db.PrepareContext(ctx, createTransactionEvent); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateTransactionEvent: %w", err)
+	}
 	if q.deleteAccountByUserIDStmt, err = db.PrepareContext(ctx, deleteAccountByUserID); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteAccountByUserID: %w", err)
 	}
@@ -51,6 +54,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
 	}
+	if q.updateTransactionStmt, err = db.PrepareContext(ctx, updateTransaction); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateTransaction: %w", err)
+	}
 	return &q, nil
 }
 
@@ -59,6 +65,11 @@ func (q *Queries) Close() error {
 	if q.createTransactionStmt != nil {
 		if cerr := q.createTransactionStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createTransactionStmt: %w", cerr)
+		}
+	}
+	if q.createTransactionEventStmt != nil {
+		if cerr := q.createTransactionEventStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createTransactionEventStmt: %w", cerr)
 		}
 	}
 	if q.deleteAccountByUserIDStmt != nil {
@@ -101,6 +112,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing insertUserStmt: %w", cerr)
 		}
 	}
+	if q.updateTransactionStmt != nil {
+		if cerr := q.updateTransactionStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateTransactionStmt: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -141,6 +157,7 @@ type Queries struct {
 	db                            DBTX
 	tx                            *sql.Tx
 	createTransactionStmt         *sql.Stmt
+	createTransactionEventStmt    *sql.Stmt
 	deleteAccountByUserIDStmt     *sql.Stmt
 	getAccountByIDStmt            *sql.Stmt
 	getAccountsByUserIDStmt       *sql.Stmt
@@ -149,6 +166,7 @@ type Queries struct {
 	getUserByUserNameStmt         *sql.Stmt
 	insertAccountStmt             *sql.Stmt
 	insertUserStmt                *sql.Stmt
+	updateTransactionStmt         *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
@@ -156,6 +174,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		db:                            tx,
 		tx:                            tx,
 		createTransactionStmt:         q.createTransactionStmt,
+		createTransactionEventStmt:    q.createTransactionEventStmt,
 		deleteAccountByUserIDStmt:     q.deleteAccountByUserIDStmt,
 		getAccountByIDStmt:            q.getAccountByIDStmt,
 		getAccountsByUserIDStmt:       q.getAccountsByUserIDStmt,
@@ -164,5 +183,6 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		getUserByUserNameStmt:         q.getUserByUserNameStmt,
 		insertAccountStmt:             q.insertAccountStmt,
 		insertUserStmt:                q.insertUserStmt,
+		updateTransactionStmt:         q.updateTransactionStmt,
 	}
 }

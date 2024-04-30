@@ -99,6 +99,10 @@ func (t Transaction) ReadyForProcessDeposit() error {
 	return nil
 }
 
+func (t Transaction) IsInitTransaction() bool {
+	return t.Status == StatusInit
+}
+
 func (t Transaction) MakeTransactionDepositProcessing() (Transaction, Event, error) {
 	if err := t.ReadyForProcessDeposit(); err != nil {
 		return t, Event{}, fmt.Errorf("ready for process deposit failed: %w", err)
