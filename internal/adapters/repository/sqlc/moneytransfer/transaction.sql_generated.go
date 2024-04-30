@@ -69,3 +69,36 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id int64) (*Transactio
 	)
 	return &i, err
 }
+
+const getTransactionByRequestID = `-- name: GetTransactionByRequestID :one
+SELECT id, account_id, amount, version, request_id, description, partner_ref_transaction_id, status, type, data, created_at, updated_at
+FROM ` + "`" + `transaction` + "`" + `
+WHERE ` + "`" + `account_id` + "`" + ` = ?
+  AND ` + "`" + `request_id` + "`" + ` = ?
+limit 1
+`
+
+type GetTransactionByRequestIDParams struct {
+	AccountID int64  `json:"account_id"`
+	RequestID string `json:"request_id"`
+}
+
+func (q *Queries) GetTransactionByRequestID(ctx context.Context, arg *GetTransactionByRequestIDParams) (*Transaction, error) {
+	row := q.queryRow(ctx, q.getTransactionByRequestIDStmt, getTransactionByRequestID, arg.AccountID, arg.RequestID)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.AccountID,
+		&i.Amount,
+		&i.Version,
+		&i.RequestID,
+		&i.Description,
+		&i.PartnerRefTransactionID,
+		&i.Status,
+		&i.Type,
+		&i.Data,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return &i, err
+}

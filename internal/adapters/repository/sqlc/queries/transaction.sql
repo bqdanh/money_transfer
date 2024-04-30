@@ -1,3 +1,5 @@
+#define model here for query linter, plz refer to: internal/adapters/repository/sqlc/schema/table_account.sql
+
 CREATE TABLE `transaction`
 (
     `id`                         BIGINT AUTO_INCREMENT NOT NULL COMMENT 'is identify transaction',
@@ -35,3 +37,10 @@ limit 1;
 INSERT INTO `transaction` (`account_id`, `amount`, `version`, `request_id`, `description`,
                            `partner_ref_transaction_id`, `status`, `type`, `data`)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+-- name: GetTransactionByRequestID :one
+SELECT *
+FROM `transaction`
+WHERE `account_id` = ?
+  AND `request_id` = ?
+limit 1;

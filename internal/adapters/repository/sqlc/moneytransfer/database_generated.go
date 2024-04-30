@@ -39,6 +39,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getTransactionByIDStmt, err = db.PrepareContext(ctx, getTransactionByID); err != nil {
 		return nil, fmt.Errorf("error preparing query GetTransactionByID: %w", err)
 	}
+	if q.getTransactionByRequestIDStmt, err = db.PrepareContext(ctx, getTransactionByRequestID); err != nil {
+		return nil, fmt.Errorf("error preparing query GetTransactionByRequestID: %w", err)
+	}
 	if q.getUserByUserNameStmt, err = db.PrepareContext(ctx, getUserByUserName); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserByUserName: %w", err)
 	}
@@ -76,6 +79,11 @@ func (q *Queries) Close() error {
 	if q.getTransactionByIDStmt != nil {
 		if cerr := q.getTransactionByIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getTransactionByIDStmt: %w", cerr)
+		}
+	}
+	if q.getTransactionByRequestIDStmt != nil {
+		if cerr := q.getTransactionByRequestIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getTransactionByRequestIDStmt: %w", cerr)
 		}
 	}
 	if q.getUserByUserNameStmt != nil {
@@ -130,29 +138,31 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                        DBTX
-	tx                        *sql.Tx
-	createTransactionStmt     *sql.Stmt
-	deleteAccountByUserIDStmt *sql.Stmt
-	getAccountByIDStmt        *sql.Stmt
-	getAccountsByUserIDStmt   *sql.Stmt
-	getTransactionByIDStmt    *sql.Stmt
-	getUserByUserNameStmt     *sql.Stmt
-	insertAccountStmt         *sql.Stmt
-	insertUserStmt            *sql.Stmt
+	db                            DBTX
+	tx                            *sql.Tx
+	createTransactionStmt         *sql.Stmt
+	deleteAccountByUserIDStmt     *sql.Stmt
+	getAccountByIDStmt            *sql.Stmt
+	getAccountsByUserIDStmt       *sql.Stmt
+	getTransactionByIDStmt        *sql.Stmt
+	getTransactionByRequestIDStmt *sql.Stmt
+	getUserByUserNameStmt         *sql.Stmt
+	insertAccountStmt             *sql.Stmt
+	insertUserStmt                *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                        tx,
-		tx:                        tx,
-		createTransactionStmt:     q.createTransactionStmt,
-		deleteAccountByUserIDStmt: q.deleteAccountByUserIDStmt,
-		getAccountByIDStmt:        q.getAccountByIDStmt,
-		getAccountsByUserIDStmt:   q.getAccountsByUserIDStmt,
-		getTransactionByIDStmt:    q.getTransactionByIDStmt,
-		getUserByUserNameStmt:     q.getUserByUserNameStmt,
-		insertAccountStmt:         q.insertAccountStmt,
-		insertUserStmt:            q.insertUserStmt,
+		db:                            tx,
+		tx:                            tx,
+		createTransactionStmt:         q.createTransactionStmt,
+		deleteAccountByUserIDStmt:     q.deleteAccountByUserIDStmt,
+		getAccountByIDStmt:            q.getAccountByIDStmt,
+		getAccountsByUserIDStmt:       q.getAccountsByUserIDStmt,
+		getTransactionByIDStmt:        q.getTransactionByIDStmt,
+		getTransactionByRequestIDStmt: q.getTransactionByRequestIDStmt,
+		getUserByUserNameStmt:         q.getUserByUserNameStmt,
+		insertAccountStmt:             q.insertAccountStmt,
+		insertUserStmt:                q.insertUserStmt,
 	}
 }

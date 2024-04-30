@@ -15,6 +15,7 @@ type Querier interface {
 	GetAccountByID(ctx context.Context, id int64) (*Account, error)
 	GetAccountsByUserID(ctx context.Context, userID int64) ([]*Account, error)
 	GetTransactionByID(ctx context.Context, id int64) (*Transaction, error)
+	GetTransactionByRequestID(ctx context.Context, arg *GetTransactionByRequestIDParams) (*Transaction, error)
 	GetUserByUserName(ctx context.Context, userName string) (*User, error)
 	InsertAccount(ctx context.Context, arg *InsertAccountParams) (sql.Result, error)
 	InsertUser(ctx context.Context, arg *InsertUserParams) (sql.Result, error)
