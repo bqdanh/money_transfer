@@ -10,30 +10,28 @@ import (
 )
 
 type Transaction struct {
-	ID                      int64           `json:"id"`
-	Account                 account.Account `json:"account"`
-	Amount                  currency.Amount `json:"amount"`
-	Version                 int             `json:"version"`
-	RequestID               string          `json:"request_id"`
-	Description             string          `json:"description"`
-	PartnerRefTransactionID string          `json:"partner_ref_transaction_id"`
-	Status                  Status          `json:"status"`
-	Type                    Type            `json:"type"`
-	Data                    Data            `json:"data"`
+	ID          int64           `json:"id"`
+	Account     account.Account `json:"account"`
+	Amount      currency.Amount `json:"amount"`
+	Version     int             `json:"version"`
+	RequestID   string          `json:"request_id"`
+	Description string          `json:"description"`
+	Status      Status          `json:"status"`
+	Type        Type            `json:"type"`
+	Data        Data            `json:"data"`
 }
 
 func CreateTransaction(requestID string, account account.Account, amount currency.Amount, description string, t Type, data Data) Transaction {
 	return Transaction{
-		ID:                      0,
-		Account:                 account,
-		Amount:                  amount,
-		Version:                 0,
-		RequestID:               requestID,
-		Description:             description,
-		PartnerRefTransactionID: "",
-		Status:                  StatusInit,
-		Type:                    t,
-		Data:                    data,
+		ID:          0,
+		Account:     account,
+		Amount:      amount,
+		Version:     0,
+		RequestID:   requestID,
+		Description: description,
+		Status:      StatusInit,
+		Type:        t,
+		Data:        data,
 	}
 }
 
@@ -120,6 +118,10 @@ func (t Transaction) MakeTransactionDepositProcessing() (Transaction, Event, err
 	return t, evt, nil
 }
 
+func (t Transaction) GetPartnerRefTransactionID() string {
+	return t.Data.GetPartnerRefTransactionID()
+}
+
 func (t Transaction) WithTransactionResult(tranData Data) (Transaction, Event, error) {
 	if t.Status != StatusProcessing {
 		return t, Event{}, exceptions.NewPreconditionError(
@@ -136,7 +138,6 @@ func (t Transaction) WithTransactionResult(tranData Data) (Transaction, Event, e
 	t.Data = tranData
 	t.Status = tranData.GetTransactionStatus()
 	t.Version += 1
-	t.PartnerRefTransactionID = tranData.GetPartnerRefTransactionID()
 
 	var evtData EventData
 	switch tranData.GetTransactionStatus() {

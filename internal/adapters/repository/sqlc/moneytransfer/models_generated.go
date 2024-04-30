@@ -86,11 +86,10 @@ type Transaction struct {
 	Status string `json:"status"`
 	// type of transaction
 	Type string `json:"type"`
-	// data of transaction
-	Data        json.RawMessage `json:"data"`
-	CreatedDate time.Time       `json:"created_date"`
-	CreatedAt   time.Time       `json:"created_at"`
-	UpdatedAt   time.Time       `json:"updated_at"`
+	// transaction extra data
+	Data      json.RawMessage `json:"data"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
 }
 
 type TransactionEvent struct {

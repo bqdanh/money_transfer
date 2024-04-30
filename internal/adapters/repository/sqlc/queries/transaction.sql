@@ -24,3 +24,14 @@ CREATE TABLE `transaction`
     PARTITION before_2025_02 VALUES LESS THAN (TO_DAYS('2025-02-01')),
     PARTITION before_2025_12 VALUES LESS THAN MAXVALUE
     );
+
+-- name: GetTransactionByID :one
+SELECT *
+FROM `transaction`
+WHERE `id` = ?
+limit 1;
+
+-- name: CreateTransaction :execresult
+INSERT INTO `transaction` (`account_id`, `amount`, `version`, `request_id`, `description`,
+                           `partner_ref_transaction_id`, `status`, `type`, `data`)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);

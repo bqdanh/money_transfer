@@ -13,6 +13,14 @@ type Amount struct {
 	FractionalUnits int64 `json:"fractional_units"`
 }
 
+func (a Amount) Float64() float64 {
+	return float64(a.Amount) + float64(a.FractionalUnits)/100
+}
+
+func (a Amount) String() string {
+	return fmt.Sprintf("%.2f", a.Float64())
+}
+
 type AmountParser func(amount float64) (Amount, error)
 
 var (

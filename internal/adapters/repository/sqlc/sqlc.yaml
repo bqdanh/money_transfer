@@ -17,5 +17,6 @@ sql:
         output_db_file_name: database_generated
         output_models_file_name: models_generated
         output_querier_file_name: querier_generated
-
-#overrides:
+#        overrides:
+#          - column: "transaction.extra_data"
+#            go_type: "github.com/bqdanh/money_transfer/internal/adapters/repository/sqlc/extradata.TransactionExtraData"
