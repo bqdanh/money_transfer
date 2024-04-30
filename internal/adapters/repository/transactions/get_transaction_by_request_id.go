@@ -2,7 +2,6 @@ package transactions
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/bqdanh/money_transfer/internal/adapters/repository/sqlc/moneytransfer"
@@ -19,11 +18,9 @@ func (r TransactionMysqlRepository) GetTransactionByRequestID(ctx context.Contex
 	if err != nil {
 		return transaction.Transaction{}, fmt.Errorf("error get transaction by request id: %w", err)
 	}
-	t := transaction.Transaction{}
-	err = json.Unmarshal(result.Data, &t)
+	t, err := fromTransactionDAOToTransaction(*result)
 	if err != nil {
-		return transaction.Transaction{}, fmt.Errorf("error unmarshal transaction: %w", err)
+		return transaction.Transaction{}, fmt.Errorf("error convert transaction dao to transaction: %w", err)
 	}
-	t.ID = result.ID
 	return t, nil
 }
