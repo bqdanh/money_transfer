@@ -681,19 +681,18 @@ func TestCreateDepositTransaction_Handle(t *testing.T) {
 						CreateTransaction(
 							gomock.AssignableToTypeOf(context.Background()),
 							transaction.Transaction{
-								ID:      0,
-								Account: utAccountNormal,
-								Amount: currency.Amount{
+								0,
+								utAccountNormal,
+								currency.Amount{
 									Currency: currency.VND,
 									Amount:   10_000,
 								},
-								Version:                 0,
-								RequestID:               "request-id",
-								Description:             "descriptions",
-								PartnerRefTransactionID: "",
-								Status:                  transaction.StatusInit,
-								Type:                    transaction.TypeDeposit,
-								Data: transaction.Data{
+								0,
+								"request-id",
+								"descriptions",
+								transaction.StatusInit,
+								transaction.TypeDeposit,
+								transaction.Data{
 									IsTransactionDataItr: deposit.Deposit{
 										Source:            "source",
 										BankTransactionID: "",
