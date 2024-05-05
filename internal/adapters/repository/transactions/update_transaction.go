@@ -12,15 +12,15 @@ import (
 )
 
 func (r TransactionMysqlRepository) UpdateTransaction(ctx context.Context, t transaction.Transaction, evt transaction.Event) error {
-	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{
+	tx, errtx := r.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelReadCommitted,
 	})
-	if err != nil {
-		return fmt.Errorf("error begin transaction: %w", err)
+	if errtx != nil {
+		return fmt.Errorf("error begin transaction: %w", errtx)
 	}
-	err = database.ExecuteTransaction(tx, func() error {
+	err := database.ExecuteTransaction(tx, func() error {
 		q := moneytransfer.New(tx)
-		bs, err := json.Marshal(t)
+		transDataBs, err := json.Marshal(t)
 		if err != nil {
 			return fmt.Errorf("error marshal transaction: %w", err)
 		}
@@ -32,7 +32,7 @@ func (r TransactionMysqlRepository) UpdateTransaction(ctx context.Context, t tra
 			PartnerRefTransactionID: t.GetPartnerRefTransactionID(),
 			Status:                  string(t.Status),
 			Type:                    string(t.Type),
-			Data:                    bs,
+			Data:                    transDataBs,
 			ID:                      t.ID,
 		})
 		if err != nil {
@@ -48,6 +48,9 @@ func (r TransactionMysqlRepository) UpdateTransaction(ctx context.Context, t tra
 			Data:          evtbs,
 			EventName:     string(evt.Name),
 		})
+		if err != nil {
+			return fmt.Errorf("error create transaction event: %w", err)
+		}
 		return nil
 	})
 	if err != nil {
