@@ -7,11 +7,13 @@ import (
 	"strings"
 
 	"github.com/bqdanh/money_transfer/internal/adapters/distribute_lock"
-	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server"
-	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
+	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server"
+	"github.com/bqdanh/money_transfer/internal/adapters/server/http_gateway"
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
 	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/generate_user_token"
+	"github.com/bqdanh/money_transfer/internal/applications/transactions/deposit/create_transaction"
+	"github.com/bqdanh/money_transfer/internal/applications/transactions/deposit/process_transaction"
 	implement_bank_account2 "github.com/bqdanh/money_transfer/internal/entities/account/sof/bank_account/implement_bank_account"
 	"github.com/bqdanh/money_transfer/pkg/database"
 	"github.com/bqdanh/money_transfer/pkg/logger"
@@ -27,16 +29,18 @@ var (
 )
 
 type Config struct {
-	Env             string                     `json:"env" mapstructure:"env"`
-	GRPC            grpc_server.Config         `json:"grpc" mapstructure:"grpc"`
-	HTTP            http_gateway.Config        `json:"http" mapstructure:"http"`
-	Database        database.Config            `json:"database" mapstructure:"database"`
-	Logger          logger.Config              `json:"logger" mapstructure:"logger"`
-	JwtToken        user_token.Config          `json:"jwt_token" mapstructure:"jwt_token"`
-	GenerateToken   generate_user_token.Config `json:"generate_token" mapstructure:"generate_token"`
-	LinkAccount     link_account.Config        `json:"link_account" mapstructure:"link_account"`
-	DistributeLock  distribute_lock.Config     `json:"distribute_lock" mapstructure:"distribute_lock"`
-	RedisConnection pkgredis.Config            `json:"redis_connection" mapstructure:"redis_connection"`
+	Env                string                     `json:"env" mapstructure:"env"`
+	GRPC               grpc_server.Config         `json:"grpc" mapstructure:"grpc"`
+	HTTP               http_gateway.Config        `json:"http" mapstructure:"http"`
+	Database           database.Config            `json:"database" mapstructure:"database"`
+	Logger             logger.Config              `json:"logger" mapstructure:"logger"`
+	JwtToken           user_token.Config          `json:"jwt_token" mapstructure:"jwt_token"`
+	GenerateToken      generate_user_token.Config `json:"generate_token" mapstructure:"generate_token"`
+	LinkAccount        link_account.Config        `json:"link_account" mapstructure:"link_account"`
+	DistributeLock     distribute_lock.Config     `json:"distribute_lock" mapstructure:"distribute_lock"`
+	RedisConnection    pkgredis.Config            `json:"redis_connection" mapstructure:"redis_connection"`
+	CreateTransaction  create_transaction.Config  `json:"create_transaction" mapstructure:"create_transaction"`
+	ProcessTransaction process_transaction.Config `json:"process_transaction" mapstructure:"process_transaction"`
 }
 
 func loadDefaultConfig() *Config {

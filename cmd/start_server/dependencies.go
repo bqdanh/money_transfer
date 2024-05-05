@@ -7,6 +7,7 @@ import (
 	"github.com/bqdanh/money_transfer/configs/server"
 	"github.com/bqdanh/money_transfer/internal/adapters/distribute_lock"
 	accountrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/accounts"
+	"github.com/bqdanh/money_transfer/internal/adapters/repository/transactions"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
 	"github.com/bqdanh/money_transfer/internal/adapters/user_token"
 	"github.com/bqdanh/money_transfer/internal/adapters/username_pw_validator"
@@ -42,6 +43,7 @@ type Adapters struct {
 	UserJWT                                 user_token.JWTToken
 	UserMysqlRepository                     usersrepo.UserMysqlRepository
 	AccountMysqlRepository                  accountrepo.AccountMysqlRepository
+	TransactionMysqlRepository              transactions.TransactionMysqlRepository
 	DistributeLockWithRedis                 distribute_lock.DistributeLockWithRedis
 	ValidateUserNamePasswordWithUserUseCase username_pw_validator.ValidateUserNamePasswordWithUserUseCase
 	GenerateUserToken                       generate_user_token.GenerateUserToken
@@ -79,10 +81,16 @@ func NewAdapters(cfg *server.Config, infra *InfrastructureDependencies) (*Adapte
 
 	distributeLockWithRedis := distribute_lock.NewDistributeLockWithRedis(cfg.DistributeLock, infra.redisClient)
 
+	transactionMysqlRepository, err := transactions.NewTransactionMysqlRepository(infra.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new transaction repository: %w", err)
+	}
+
 	return &Adapters{
 		UserJWT:                                 jwtTokenAdapter,
 		UserMysqlRepository:                     userMysqlRepo,
 		AccountMysqlRepository:                  accountMysqlrepo,
+		TransactionMysqlRepository:              transactionMysqlRepository,
 		DistributeLockWithRedis:                 distributeLockWithRedis,
 		ValidateUserNamePasswordWithUserUseCase: usernamePasswordValidatorAdapter,
 		GenerateUserToken:                       tokenGenerator,

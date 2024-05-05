@@ -36,3 +36,8 @@ redis_connection:
   addr: 0.0.0.0:6379
   db: 0
   pool_size: 10
+
+create_transaction:
+  ...
+process_transaction:
+  ...

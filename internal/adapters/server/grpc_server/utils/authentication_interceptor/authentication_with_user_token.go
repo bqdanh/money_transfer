@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/bqdanh/money_transfer/api/grpc/errdetails_custom"
-	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils/exceptions_parser"
+	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/utils/exceptions_parser"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/validate_user_token"
 	"github.com/bqdanh/money_transfer/internal/entities/authenticate"
 	"github.com/bqdanh/money_transfer/internal/entities/exceptions"

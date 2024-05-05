@@ -103,6 +103,18 @@ func (t Transaction) IsInitTransaction() bool {
 	return t.Status == StatusInit
 }
 
+func (t Transaction) IsProcessing() bool {
+	return t.Status == StatusInit || t.Status == StatusProcessing
+}
+
+func (t Transaction) IsSuccess() bool {
+	return t.Status == StatusSuccess
+}
+
+func (t Transaction) IsFailed() bool {
+	return t.Status == StatusFailed
+}
+
 func (t Transaction) MakeTransactionDepositProcessing() (Transaction, Event, error) {
 	if err := t.ReadyForProcessDeposit(); err != nil {
 		return t, Event{}, fmt.Errorf("ready for process deposit failed: %w", err)

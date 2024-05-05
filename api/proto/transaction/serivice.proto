@@ -25,15 +25,22 @@ message MakeDepositRequest {
   int64 account_id = 2 [(validate.rules).int64.gte = 1];
 
   string request_id = 3[(validate.rules).string.min_len = 1];
-  float amount = 4 [(validate.rules).float.gt = 0];
-  string descriptions = 5;
+  double amount = 4 [(validate.rules).double.gt = 0];
+  string currency = 5 [(validate.rules).string.min_len = 1];
+  string descriptions = 6;
 }
 
+enum TransactionStatus {
+  PROCESSING = 0;
+  SUCCESS = 1;
+  FAILED = 2;
+}
 message MakeDepositResponse {
   int32 code = 1;
   string message = 2;
   message Data {
     int64 transaction_id = 1;
+    TransactionStatus transaction_status = 2;
   }
   Data data = 3;
 }

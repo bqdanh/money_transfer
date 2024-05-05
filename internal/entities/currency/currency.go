@@ -24,6 +24,7 @@ func (a Amount) String() string {
 type AmountParser func(amount float64) (Amount, error)
 
 var (
+	currencyStringMapping = map[string]Unit{}
 	currencyParserMapping = map[Unit]AmountParser{}
 	rwLock                = sync.RWMutex{}
 )
@@ -35,6 +36,16 @@ func RegisterCurrencyParser(currency Unit, parser AmountParser) {
 		panic(fmt.Errorf("currency(%s) already registered", currency))
 	}
 	currencyParserMapping[currency] = parser
+	currencyStringMapping[string(currency)] = currency
+}
+
+func GetCurrencyUnit(currency string) (Unit, error) {
+	rwLock.RLock()
+	defer rwLock.RUnlock()
+	if unit, ok := currencyStringMapping[currency]; ok {
+		return unit, nil
+	}
+	return "", fmt.Errorf("currency(%s) not found", currency)
 }
 
 func GetCurrencyParser(currency Unit) (AmountParser, error) {

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/bqdanh/money_transfer/api/grpc/user_service"
-	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils"
-	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils/exceptions_parser"
+	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/utils"
+	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/utils/exceptions_parser"
 	"github.com/bqdanh/money_transfer/internal/applications/users/create_user"
 	"github.com/bqdanh/money_transfer/pkg/logger"
 )

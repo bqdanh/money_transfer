@@ -101,6 +101,17 @@ func (m *MakeDepositRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetCurrency()) < 1 {
+		err := MakeDepositRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for Descriptions
 
 	if len(errors) > 0 {
@@ -341,6 +352,8 @@ func (m *MakeDepositResponse_Data) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for TransactionId
+
+	// no validation rules for TransactionStatus
 
 	if len(errors) > 0 {
 		return MakeDepositResponse_DataMultiError(errors)

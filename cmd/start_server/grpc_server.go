@@ -12,7 +12,9 @@ import (
 	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/login"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/validate_user_token"
+	"github.com/bqdanh/money_transfer/internal/applications/transactions/deposit/create_transaction"
 	"github.com/bqdanh/money_transfer/internal/applications/transactions/deposit/make_transaction"
+	"github.com/bqdanh/money_transfer/internal/applications/transactions/deposit/process_transaction"
 	"github.com/bqdanh/money_transfer/internal/applications/users/create_user"
 	"google.golang.org/grpc"
 )
@@ -65,9 +67,18 @@ func NewAccountService(cfg server.Config, _ *InfrastructureDependencies, adapter
 	return accountService, nil
 }
 
-func NewTransactionService(_ server.Config, _ *InfrastructureDependencies, adapters *Adapters) (*transactions.TransactionService, error) {
+func NewTransactionService(cfg server.Config, _ *InfrastructureDependencies, adapters *Adapters) (*transactions.TransactionService, error) {
+	createTransactionHandler, err := create_transaction.NewCreateDepositTransaction(cfg.CreateTransaction, adapters.DistributeLockWithRedis, adapters.AccountMysqlRepository, adapters.TransactionMysqlRepository)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new create deposit transaction application: %w", err)
+	}
+	processingTransactionHandler, err := process_transaction.NewProcessDepositTransaction(cfg.ProcessTransaction, adapters.TransactionMysqlRepository, adapters.DistributeLockWithRedis, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new process deposit transaction application: %w", err)
+	}
+
 	transactionsApp := transactions.TransactionApplications{
-		MakeTransactionSync: make_transaction.MakeTransactionSync{},
+		MakeTransactionSync: make_transaction.NewMakeTransactionSync(createTransactionHandler, processingTransactionHandler),
 	}
 	// mew transaction service
 	transactionService := transactions.NewTransactionService(transactionsApp)

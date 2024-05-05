@@ -50,7 +50,9 @@ definitions:
         type: string
       amount:
         type: number
-        format: float
+        format: double
+      currency:
+        type: string
       descriptions:
         type: string
   accountMakeDepositResponse:
@@ -69,6 +71,15 @@ definitions:
       transactionId:
         type: string
         format: int64
+      transactionStatus:
+        $ref: '#/definitions/accountTransactionStatus'
+  accountTransactionStatus:
+    type: string
+    enum:
+      - PROCESSING
+      - SUCCESS
+      - FAILED
+    default: PROCESSING
   protobufAny:
     type: object
     properties:

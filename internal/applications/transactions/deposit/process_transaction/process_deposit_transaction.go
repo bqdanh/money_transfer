@@ -38,7 +38,7 @@ func NewProcessDepositTransaction(cfg Config, tr transactionRepository, dl distr
 	}, nil
 }
 
-func (p ProcessDepositTransaction) ProcessDepositTransaction(ctx context.Context, transactionID int64) (transaction.Transaction, error) {
+func (p ProcessDepositTransaction) Handle(ctx context.Context, transactionID int64) (transaction.Transaction, error) {
 	if transactionID <= 0 {
 		return transaction.Transaction{}, exceptions.NewInvalidArgumentError(
 			"TransactionID",
