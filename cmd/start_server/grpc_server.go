@@ -9,6 +9,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/transactions"
 	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/users"
 	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/utils/authentication_interceptor"
+	"github.com/bqdanh/money_transfer/internal/adapters/sof_providers"
 	"github.com/bqdanh/money_transfer/internal/applications/accounts/link_account"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/login"
 	"github.com/bqdanh/money_transfer/internal/applications/authenticate/validate_user_token"
@@ -75,7 +76,11 @@ func NewTransactionService(cfg server.Config, _ *InfrastructureDependencies, ada
 	if err != nil {
 		return nil, fmt.Errorf("failed to new create deposit transaction application: %w", err)
 	}
-	processingTransactionHandler, err := process_transaction.NewProcessDepositTransaction(cfg.ProcessTransaction, adapters.TransactionMysqlRepository, adapters.DistributeLockWithRedis, nil)
+	sofProviderAdapter, err := sof_providers.NewSofGateway( /*please register all source of fund provider: ...*/ )
+	if err != nil {
+		return nil, fmt.Errorf("failed to new sof provider adapter: %w", err)
+	}
+	processingTransactionHandler, err := process_transaction.NewProcessDepositTransaction(cfg.ProcessTransaction, adapters.TransactionMysqlRepository, adapters.DistributeLockWithRedis, sofProviderAdapter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new process deposit transaction application: %w", err)
 	}
