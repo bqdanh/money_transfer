@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/pprof"
 	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -19,11 +17,16 @@ type Config struct {
 	Port int    `json:"port" mapstructure:"port" yaml:"port"`
 }
 
-type Services interface {
+type GrpcGatewayServices interface {
 	HTTPGatewayRegister(mux *runtime.ServeMux) error
 }
 
-func StartServer(cfg Config, services ...Services) (graceShutdown func(), cerr chan error) {
+type HTTPService interface {
+	HTTPRegister(mux *http.ServeMux) error
+}
+
+func StartServer(cfg Config, grpcGwServices []GrpcGatewayServices, httpServices []HTTPService) (graceShutdown func(), cerr chan error) {
+	httpMux := http.NewServeMux()
 	chanErr := make(chan error, 1)
 	mux := runtime.NewServeMux(
 		runtime.WithIncomingHeaderMatcher(HeaderMatcher),
@@ -39,26 +42,32 @@ func StartServer(cfg Config, services ...Services) (graceShutdown func(), cerr c
 			},
 		}),
 	)
-	for _, service := range services {
+	for _, service := range grpcGwServices {
 		err := service.HTTPGatewayRegister(mux)
 		if err != nil {
 			chanErr <- fmt.Errorf("failed to register http gateway: %v", err)
 			return nil, chanErr
 		}
 	}
-
-	httpMux := http.NewServeMux()
 	httpMux.Handle("/", mux)
-
-	httpMux, err := RegisterMonitorHttpService(httpMux)
-	if err != nil {
-		chanErr <- fmt.Errorf("failed to register monitor http service: %v", err)
-		return nil, chanErr
+	for _, service := range httpServices {
+		err := service.HTTPRegister(httpMux)
+		if err != nil {
+			chanErr <- fmt.Errorf("failed to register http service: %v", err)
+			return nil, chanErr
+		}
 	}
 
 	httpServer := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		Handler: httpMux,
+	}
+
+	graceShutdown = func() {
+		log.Println("http_gateway server is shutting down")
+		if err := httpServer.Shutdown(context.Background()); err != nil {
+			chanErr <- fmt.Errorf("failed to shutdown http_gateway: %v", err)
+		}
 	}
 
 	go func() {
@@ -75,33 +84,7 @@ func StartServer(cfg Config, services ...Services) (graceShutdown func(), cerr c
 		}
 	}()
 
-	graceShutdown = func() {
-		log.Println("http_gateway server is shutting down")
-		if err := httpServer.Shutdown(context.Background()); err != nil {
-			chanErr <- fmt.Errorf("failed to shutdown http_gateway: %v", err)
-		}
-	}
-
 	return graceShutdown, chanErr
-}
-
-func RegisterMonitorHttpService(httpMux *http.ServeMux) (*http.ServeMux, error) {
-	PrometheusHandler(httpMux)
-	PprofHandler(httpMux)
-	return httpMux, nil
-}
-
-func PrometheusHandler(httpMux *http.ServeMux) {
-	httpMux.Handle("/metrics", promhttp.Handler())
-}
-
-func PprofHandler(httpMux *http.ServeMux) {
-	// Register pprof handlers
-	httpMux.HandleFunc("/debug/pprof/", pprof.Index)
-	httpMux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	httpMux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-	httpMux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	httpMux.HandleFunc("/debug/pprof/trace", pprof.Trace)
 }
 
 var _Headers = map[string]struct{}{}

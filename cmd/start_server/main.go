@@ -17,6 +17,7 @@ import (
 	"github.com/bqdanh/money_transfer/internal/adapters/grpc_server/utils/authentication_interceptor"
 	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway"
 	accountgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/accounts"
+	"github.com/bqdanh/money_transfer/internal/adapters/http_gateway/monitor"
 	usersgw "github.com/bqdanh/money_transfer/internal/adapters/http_gateway/users"
 	accountrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/accounts"
 	usersrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/users"
@@ -125,7 +126,11 @@ func StartHTTPServer(cfg *server.Config) error {
 		return fmt.Errorf("failed to new http gateway services: %w", err)
 	}
 
-	httpStop, cherr := http_gateway.StartServer(cfg.HTTP, httpgwServices...)
+	httpServices := []http_gateway.HTTPService{
+		monitor.PprofService{},
+		monitor.PrometheusService{},
+	}
+	httpStop, cherr := http_gateway.StartServer(cfg.HTTP, httpgwServices, httpServices)
 	go func() {
 		for herr := range cherr {
 			cerr <- fmt.Errorf("http server error: %w", herr)
@@ -235,7 +240,7 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies) ([]gr
 	}, nil
 }
 
-func NewHTTPGatewayServices(cfg server.Config, _ *InfrastructureDependencies) ([]http_gateway.Services, error) {
+func NewHTTPGatewayServices(cfg server.Config, _ *InfrastructureDependencies) ([]http_gateway.GrpcGatewayServices, error) {
 	grpcServerAddr := fmt.Sprintf("%s:%d", cfg.GRPC.Host, cfg.GRPC.Port)
 	grpcServerConn, err := grpc.Dial(grpcServerAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -251,7 +256,7 @@ func NewHTTPGatewayServices(cfg server.Config, _ *InfrastructureDependencies) ([
 	userHttpGwService := usersgw.NewUserGatewayService(grpcServerConn)
 	accountHttpGwService := accountgw.NewAccountGatewayService(grpcServerConn)
 
-	return []http_gateway.Services{
+	return []http_gateway.GrpcGatewayServices{
 		userHttpGwService,
 		accountHttpGwService,
 	}, nil
