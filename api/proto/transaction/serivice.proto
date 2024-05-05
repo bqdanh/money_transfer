@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package money_transfer.account;
+option go_package = "github.com/bqdanh/money_transfer";
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/rpc/error_details.proto";
+
+import "protoc-gen-swagger/options/annotations.proto";
+
+service TransactionService {
+  //MakeDeposit is api for client make deposit to account, it will return transaction_id
+  // This API is example for make deposit to account, that will increase balance of account without any validate source of money.
+  rpc MakeDeposit(MakeDepositRequest) returns (MakeDepositResponse) {
+    option (google.api.http) = {
+      post: "/api/user/{user_id}/account/{account_id}/transaction/v1/make_deposit",
+      body: "*"
+    };
+  }
+}
+
+message MakeDepositRequest {
+  int64 user_id = 1 [(validate.rules).int64.gte = 1];
+  int64 account_id = 2 [(validate.rules).int64.gte = 1];
+
+  string request_id = 3[(validate.rules).string.min_len = 1];
+  float amount = 4 [(validate.rules).float.gt = 0];
+  string descriptions = 5;
+}
+
+message MakeDepositResponse {
+  int32 code = 1;
+  string message = 2;
+  message Data {
+    int64 transaction_id = 1;
+  }
+  Data data = 3;
+}
