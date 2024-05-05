@@ -31,6 +31,9 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies, adapt
 	}
 	// new transaction service
 	transactionService, err := NewTransactionService(cfg, infra, adapters)
+	if err != nil {
+		return nil, fmt.Errorf("failed to new transaction service: %w", err)
+	}
 
 	return []grpcadapter.Service{
 		userService,
