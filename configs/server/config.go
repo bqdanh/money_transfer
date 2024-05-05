@@ -54,12 +54,14 @@ func loadDefaultConfig() *Config {
 			Host: "0.0.0.0",
 			Port: 8080,
 		},
-		Database:       database.Config{},
-		Logger:         logger.Config{},
-		JwtToken:       user_token.Config{},
-		GenerateToken:  generate_user_token.Config{},
-		LinkAccount:    link_account.DefaultConfig,
-		DistributeLock: distribute_lock.DefaultConfig,
+		Database:           database.Config{},
+		Logger:             logger.Config{},
+		JwtToken:           user_token.Config{},
+		GenerateToken:      generate_user_token.Config{},
+		LinkAccount:        link_account.DefaultConfig,
+		DistributeLock:     distribute_lock.DefaultConfig,
+		CreateTransaction:  create_transaction.DefaultConfig,
+		ProcessTransaction: process_transaction.DefaultConfig,
 	}
 }
 

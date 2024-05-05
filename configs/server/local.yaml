@@ -38,6 +38,10 @@ redis_connection:
   pool_size: 10
 
 create_transaction:
-  ...
+  lock_duration: 30s
+  minimum_amount: 1000
+  maximum_amount: 100000000
+  currencies_accepted: VND, USD
+
 process_transaction:
-  ...
+  lock_duration: 30s

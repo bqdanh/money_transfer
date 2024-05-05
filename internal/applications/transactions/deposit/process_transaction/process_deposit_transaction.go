@@ -20,6 +20,10 @@ type Config struct {
 	LockDuration time.Duration `json:"lock_duration" mapstructure:"lock_duration"`
 }
 
+var DefaultConfig = Config{
+	LockDuration: 30 * time.Second,
+}
+
 func NewProcessDepositTransaction(cfg Config, tr transactionRepository, dl distributeLock, sof sofProvider) (ProcessDepositTransaction, error) {
 	if tr == nil {
 		return ProcessDepositTransaction{}, fmt.Errorf("transaction repository is nil")
