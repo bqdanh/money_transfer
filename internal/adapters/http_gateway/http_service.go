@@ -2,6 +2,7 @@ package http_gateway
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -75,7 +76,7 @@ func StartServer(cfg Config, grpcGwServices []GrpcGatewayServices, httpServices 
 		log.Println("http_gateway server is running on", httpServer.Addr)
 		defer log.Println("http_gateway server is stopping")
 		if err := httpServer.ListenAndServe(); err != nil {
-			if err == http.ErrServerClosed {
+			if errors.Is(err, http.ErrServerClosed) {
 				return
 			}
 
