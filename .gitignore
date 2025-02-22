@@ -23,3 +23,4 @@ go.work
 vendor
 db_data
 
+.vs/
