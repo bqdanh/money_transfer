@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bqdanh/money_transfer/configs/server"
 	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server"
 	"github.com/bqdanh/money_transfer/internal/adapters/server/http_gateway"
 	"github.com/bqdanh/money_transfer/internal/adapters/server/http_gateway/monitor"
@@ -17,7 +16,7 @@ import (
 )
 
 var (
-	StartServerCmd = &cli.Command{
+	Cmd = &cli.Command{
 		Name:   "server",
 		Usage:  "run http server",
 		Action: StartServerAction,
@@ -26,8 +25,8 @@ var (
 				Name:        "config",
 				Aliases:     []string{"c"},
 				Usage:       "Load configuration from file path`",
-				DefaultText: "./configs/server/local.yaml",
-				Value:       "./configs/server/local.yaml",
+				DefaultText: "./cmd/start_server/config/local.yaml",
+				Value:       "./cmd/start_server/config/local.yaml",
 				Required:    false,
 			},
 		},
@@ -36,14 +35,14 @@ var (
 
 func StartServerAction(cmdCLI *cli.Context) error {
 	cfgPath := cmdCLI.String("config")
-	cfg, err := server.LoadConfig(cfgPath)
+	cfg, err := LoadConfig(cfgPath)
 	if err != nil {
 		return fmt.Errorf("failed to load config from path\"%s\": %w", cfgPath, err)
 	}
 	return StartHTTPServer(cfg)
 }
 
-func StartHTTPServer(cfg *server.Config) error {
+func StartHTTPServer(cfg *Config) error {
 	if cfg.Env == "local" {
 		bs, err := json.Marshal(cfg)
 		if err != nil {

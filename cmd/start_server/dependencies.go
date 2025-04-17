@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/bqdanh/money_transfer/configs/server"
 	"github.com/bqdanh/money_transfer/internal/adapters/distribute_lock"
 	accountrepo "github.com/bqdanh/money_transfer/internal/adapters/repository/accounts"
 	"github.com/bqdanh/money_transfer/internal/adapters/repository/transactions"
@@ -23,7 +22,7 @@ type InfrastructureDependencies struct {
 	redisClient *redis.Client
 }
 
-func InitInfrastructure(cfg *server.Config) (*InfrastructureDependencies, error) {
+func InitInfrastructure(cfg *Config) (*InfrastructureDependencies, error) {
 	db, err := database.NewMysqlDatabaseConn(&cfg.Database)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init database: %w", err)
@@ -49,7 +48,7 @@ type Adapters struct {
 	GenerateUserToken                       generate_user_token.GenerateUserToken
 }
 
-func NewAdapters(cfg *server.Config, infra *InfrastructureDependencies) (*Adapters, error) {
+func NewAdapters(cfg *Config, infra *InfrastructureDependencies) (*Adapters, error) {
 	userMysqlRepo, err := usersrepo.NewUserMysqlRepository(infra.db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new user repository: %w", err)

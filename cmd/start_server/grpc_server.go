@@ -3,7 +3,6 @@ package start_server
 import (
 	"fmt"
 
-	"github.com/bqdanh/money_transfer/configs/server"
 	grpcadapter "github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server"
 	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/accounts"
 	"github.com/bqdanh/money_transfer/internal/adapters/server/grpc_server/transactions"
@@ -20,7 +19,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies, adapters *Adapters) ([]grpcadapter.Service, error) {
+func NewGrpcServices(cfg Config, infra *InfrastructureDependencies, adapters *Adapters) ([]grpcadapter.Service, error) {
 	userService, err := NewUserService(cfg, infra, adapters)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new user service: %w", err)
@@ -43,7 +42,7 @@ func NewGrpcServices(cfg server.Config, infra *InfrastructureDependencies, adapt
 	}, nil
 }
 
-func NewUserService(_ server.Config, _ *InfrastructureDependencies, adapters *Adapters) (*users.UserService, error) {
+func NewUserService(_ Config, _ *InfrastructureDependencies, adapters *Adapters) (*users.UserService, error) {
 	createUserHandler, err := create_user.NewCreateUser(adapters.UserMysqlRepository)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new create user application: %w", err)
@@ -62,7 +61,7 @@ func NewUserService(_ server.Config, _ *InfrastructureDependencies, adapters *Ad
 	return userService, nil
 }
 
-func NewAccountService(cfg server.Config, _ *InfrastructureDependencies, adapters *Adapters) (*accounts.AccountService, error) {
+func NewAccountService(cfg Config, _ *InfrastructureDependencies, adapters *Adapters) (*accounts.AccountService, error) {
 	accountApplication := accounts.AccountApplications{
 		LinkAccount: link_account.NewLinkBankAccount(cfg.LinkAccount, adapters.AccountMysqlRepository, adapters.DistributeLockWithRedis),
 	}
@@ -71,7 +70,7 @@ func NewAccountService(cfg server.Config, _ *InfrastructureDependencies, adapter
 	return accountService, nil
 }
 
-func NewTransactionService(cfg server.Config, _ *InfrastructureDependencies, adapters *Adapters) (*transactions.TransactionService, error) {
+func NewTransactionService(cfg Config, _ *InfrastructureDependencies, adapters *Adapters) (*transactions.TransactionService, error) {
 	createTransactionHandler, err := create_transaction.NewCreateDepositTransaction(cfg.CreateTransaction, adapters.DistributeLockWithRedis, adapters.AccountMysqlRepository, adapters.TransactionMysqlRepository)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new create deposit transaction application: %w", err)
@@ -93,7 +92,7 @@ func NewTransactionService(cfg server.Config, _ *InfrastructureDependencies, ada
 	return transactionService, nil
 }
 
-func NewAuthenticateGrpcInterceptors(_ *server.Config, _ *InfrastructureDependencies, adapters *Adapters) (grpc.UnaryServerInterceptor, error) {
+func NewAuthenticateGrpcInterceptors(_ *Config, _ *InfrastructureDependencies, adapters *Adapters) (grpc.UnaryServerInterceptor, error) {
 	validator, err := validate_user_token.NewValidateUserToken(adapters.UserJWT)
 	if err != nil {
 		return nil, fmt.Errorf("failed to new validate user token: %w", err)

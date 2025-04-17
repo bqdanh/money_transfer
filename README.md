@@ -16,33 +16,49 @@ To get api documentation you can visit [http://localhost:8080/docs](http://local
 ├── Dockerfile
 ├── Makefile
 ├── README.md
-├── api                         # define api for service
-│   ├── docs                    # api documentation generated from proto file
-│   └── proto                   # define proto for grpc
-├── cmd                         # command to execute service: http, cronjob, worker, ....
-├── configs                     # config for service
-│   └── http_server             # config for http server
+├── api                                 # define api for service
+│   ├── docs                            # api documentation generated from proto file
+│   └── proto                           # define proto for grpc
+├── cmd                                 # command to execute service: http, cronjob, worker, ....
+│   ├── configs                         # config for service
+│   │   └── http_server                 # config for http server
+├── cmd                                 # command to execute service: http, cronjob, worker, ....
+│   ├── cmd.go
+│   ├── second                          # second command, just for example
+│   │   ├── cmd.go                      # define command for second
+│   │   ├── config                      # config file configuration for this command
+│   │   │   └── local.yaml              # file running local
+│   │   └── config.go                   # structure of config
+│   └── start_server                    # service command
+│       ├── config                      # config file configuration for this command
+│       │   ├── docker_compose.yaml     # config file run with docker compose
+│       │   └── local.yaml              # config file run with local
+│       ├── config.go                   # config of service
+│       ├── dependencies.go             # init dependencies of service
+│       ├── grpc_server.go              # init grpc server
+│       ├── http_server.go              # init http server
+│       └── main.go
 ├── docker-compose.yml
-├── internal                    # contains all the business logic of the application
-│   ├── adapters                # contains the implementation of the application ports
-│   ├── applications            # business logic of the application
-│   │   ├── accounts            # business logic of accounts
-│   │   ├── transactions        # business logic of transactions withdraw and deposit
-│   │   └── users               # business logic of users
-│   ├── entities                # contains the domain entities
-│   │   ├── account             # account entity
-│   │   ├── transaction         # transaction entity
-│   │   │   ├── deposit.go      # deposit transaction
-│   │   │   ├── transaction.go  # transaction entity contains withdraw and deposit transaction
-│   │   │   └── withdraw.go     # withdraw transaction
+├── internal                            # contains all the business logic of the application
+│   ├── adapters                        # contains the implementation of the application ports
+│   ├── applications                    # business logic of the application
+│   │   ├── accounts                    # business logic of accounts
+│   │   ├── transactions                # business logic of transactions withdraw and deposit
+│   │   └── users                       # business logic of users
+│   ├── entities                        # contains the domain entities
+│   │   ├── account                     # account entity
+│   │   ├── transaction                 # transaction entity
+│   │   │   ├── deposit.go              # deposit transaction
+│   │   │   ├── transaction.go          # transaction entity contains withdraw and deposit transaction
+│   │   │   └── withdraw.go             # withdraw transaction
 │   │   └── user
-│   └── ports                   # contains the application ports, expose the application to the outside world: http, grpc, cronjob, worker, ...
-│       ├── grpc                # grpc servers
-│       │   ├── accounts        # grpc accounts server
-│       │   ├── transactions    # grpc transactions server
-│       │   └── users           # grpc users server
-│       └── http                # http servers
-└── main.go                     # entry point of the application
+│   └── ports                           # contains the application ports, expose the application to the outside world: http, grpc, cronjob, worker, ...
+│       ├── grpc                        # grpc servers
+│       │   ├── accounts                # grpc accounts server
+│       │   ├── transactions            # grpc transactions server
+│       │   └── users                   # grpc users server
+│       └── http                        # http servers
+└── main.go                             # entry point of the application
 ```
 
 # Requirements

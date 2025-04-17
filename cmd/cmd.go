@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/bqdanh/money_transfer/cmd/second"
 	"github.com/bqdanh/money_transfer/cmd/start_server"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +21,8 @@ func AppCommandLineInterface() *cli.App {
 	}
 
 	appCli.Commands = []*cli.Command{
-		start_server.StartServerCmd,
+		start_server.Cmd,
+		second.Cmd,
 	}
 
 	return appCli
