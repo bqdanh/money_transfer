@@ -14,13 +14,4 @@ CREATE TABLE `transaction`
     `updated_at`                 TIMESTAMP             NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY pk__transaction__created_at (id, created_at),
     INDEX idx__transaction__account_id__created_at (account_id, request_id, created_at)
-) PARTITION BY RANGE (TO_DAYS(`created_at`)) (
-    PARTITION start VALUES LESS THAN (0),
-    PARTITION before_2024_04 VALUES LESS THAN (TO_DAYS('2024-04-01')),
-    PARTITION before_2024_06 VALUES LESS THAN (TO_DAYS('2024-06-01')),
-    PARTITION before_2024_08 VALUES LESS THAN (TO_DAYS('2024-08-01')),
-    PARTITION before_2024_10 VALUES LESS THAN (TO_DAYS('2024-10-01')),
-    PARTITION before_2024_12 VALUES LESS THAN (TO_DAYS('2024-12-01')),
-    PARTITION before_2025_02 VALUES LESS THAN (TO_DAYS('2025-02-01')),
-    PARTITION before_2025_12 VALUES LESS THAN MAXVALUE
-    );
+);

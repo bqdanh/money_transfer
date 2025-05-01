@@ -5,7 +5,6 @@ CREATE TABLE `transaction_event`
     `version`        INT       NOT NULL,
     `event_name`     VARCHAR(255) NOT NULL,
     `data`           JSON      NOT NULL,
-    `created_date`   DATE      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `created_at`     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY pk__transaction_event (`id`),

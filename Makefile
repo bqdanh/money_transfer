@@ -16,6 +16,7 @@ GO_TOOLS = 	google.golang.org/grpc/cmd/protoc-gen-go-grpc \
 
 install:
 	go get $(GO_TOOLS)
+	brew install sqlc
 
 dependencies:
 	go mod tidy
