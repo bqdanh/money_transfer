@@ -14,6 +14,8 @@ services:
       - ./db_data:/var/lib/mysql
       - "./internal/adapters/repository/sqlc/schema/table_user.sql:/docker-entrypoint-initdb.d/1.sql"
       - "./internal/adapters/repository/sqlc/schema/table_account.sql:/docker-entrypoint-initdb.d/2.sql"
+      - "./internal/adapters/repository/sqlc/schema/table_transaction.sql:/docker-entrypoint-initdb.d/3.sql"
+      - "./internal/adapters/repository/sqlc/schema/table_transaction_event.sql:/docker-entrypoint-initdb.d/4.sql"
     networks:
       - money_network
   redis:
