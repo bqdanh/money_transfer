@@ -14,8 +14,8 @@ func AppCommandLineInterface() *cli.App {
 			Name:        "config",
 			Aliases:     []string{"c"},
 			Usage:       "Load configuration from file path`",
-			DefaultText: "./configs/server/local.yaml",
-			Value:       "./configs/server/local.yaml",
+			DefaultText: "./cmd/start_server/config/local.yaml",
+			Value:       "./cmd/start_server/config/local.yaml",
 			Required:    false,
 		},
 	}

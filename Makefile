@@ -21,8 +21,8 @@ dependencies:
 	go mod tidy
 	go mod download
 
-run-http-service:
-	go run main.go http_service --config=configs/http_server/config.yaml
+run-server:
+	go run main.go server -c ./cmd/start_server/config/local.yaml
 
 docker-compose-up:
 	docker-compose up --build
